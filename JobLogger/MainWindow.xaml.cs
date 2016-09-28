@@ -34,6 +34,8 @@ namespace JobLogger
             DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\Cendrb\OneDrive\Dokumenty\joblog");
             todayPath = Path.Combine(saveLocation.ToString(), todayFileName);
             todayLog = new FileInfo(todayPath);
+            if(!todayLog.Exists)
+                todayLog.Create().Close();
 
             reloadToday();
         }
