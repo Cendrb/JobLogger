@@ -31,7 +31,7 @@ namespace JobLogger
 
             todayFileName = DateTime.Today.Date.ToString("dd. MM. yyyy") + ".txt";
 
-            DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\Cendrb\OneDrive\Dokumenty\joblog");
+            DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\cendr\OneDrive\Dokumenty\joblog\");
             todayPath = Path.Combine(saveLocation.ToString(), todayFileName);
             todayLog = new FileInfo(todayPath);
             if(!todayLog.Exists)
@@ -62,7 +62,7 @@ namespace JobLogger
 
             int totalMinutes = today.GetTotalMinutes();
 
-            totalMinutesLabel.Content = totalMinutes + " m";
+            totalTimeLabel.Content = string.Format("{0:00}:{1:00}", totalMinutes / 60, totalMinutes % 60);
             todayLabel.Content = todayFileName;
         }
 
