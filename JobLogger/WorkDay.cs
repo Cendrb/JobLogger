@@ -20,8 +20,11 @@ namespace JobLogger
         public int GetTotalMinutes()
         {
             int total = 0;
-            foreach (JobRecord record in jobRecords)
+            foreach (JobRecord record in this.jobRecords)
+            {
                 total += (int) record.GetTotalMinutes();
+            }
+
             return total;
         }
     }
@@ -42,8 +45,8 @@ namespace JobLogger
 
         public WorkDay(DateTime date, List<JobRecord> records)
         {
-            Date = date;
-            jobRecords = new List<JobRecord>(records);
+            this.Date = date;
+            this.jobRecords = new List<JobRecord>(records);
         }
     }
 
@@ -53,22 +56,31 @@ namespace JobLogger
         public void AddRecord(JobRecord record)
         {
             if (record == null)
+            {
                 throw new ArgumentNullException();
-            if (jobRecords.Contains(record))
+            }
+
+            if (this.jobRecords.Contains(record))
+            {
                 throw new ArgumentException("One JobRecord cannot be done twice within one day");
-            jobRecords.Add(record);
+            }
+
+            this.jobRecords.Add(record);
         }
 
         public bool RemoveRecord(JobRecord record)
         {
             if (record == null)
+            {
                 throw new ArgumentNullException();
-            return jobRecords.Remove(record);
+            }
+
+            return this.jobRecords.Remove(record);
         }
 
         public ReadOnlyCollection<JobRecord> GetRecords()
         {
-            return new ReadOnlyCollection<JobRecord>(jobRecords);
+            return new ReadOnlyCollection<JobRecord>(this.jobRecords);
         }
     }
 
@@ -77,22 +89,22 @@ namespace JobLogger
     {
         private void ParseSerializedString(string serialized)
         {
-            serialized = serialized.Replace("\r", String.Empty);
+            serialized = serialized.Replace("\r", string.Empty);
             foreach (string record in serialized.Split(';'))
             {
-                if (!String.IsNullOrWhiteSpace(record.Trim('\n')))
-                    jobRecords.Add(new JobRecord(record.Trim('\n')));
+                if (!string.IsNullOrWhiteSpace(record.Trim('\n')))
+                    this.jobRecords.Add(new JobRecord(record.Trim('\n')));
             }
         }
 
         public string GetSerializedString()
         {
             StringBuilder builder = new StringBuilder();
-            foreach (JobRecord record in jobRecords)
+            foreach (JobRecord record in this.jobRecords)
             {
                 builder.Append(record.GetSerializedString());
                 builder.Append(';');
-                if (record != jobRecords.Last())
+                if (record != this.jobRecords.Last())
                 {
                     builder.AppendLine();
                     builder.AppendLine();

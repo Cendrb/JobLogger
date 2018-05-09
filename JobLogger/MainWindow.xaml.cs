@@ -21,70 +21,76 @@ namespace JobLogger
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string todayFileName;
-        private string todayPath;
-        private WorkDay today;
-        private FileInfo todayLog;
+        private DateTime currentDate;
         public MainWindow()
         {
             InitializeComponent();
 
-            todayFileName = DateTime.Today.Date.ToString("dd. MM. yyyy") + ".txt";
+            this.currentDate = DateTime.Today;
 
-            DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\cendr\OneDrive\Dokumenty\joblog\");
-            todayPath = Path.Combine(saveLocation.ToString(), todayFileName);
-            todayLog = new FileInfo(todayPath);
-            if(!todayLog.Exists)
-                todayLog.Create().Close();
-
-            reloadToday();
+            ReloadUI();
         }
 
-        private void reloadToday()
+        private void ReloadUI()
         {
-            if (todayLog.Exists)
+            string currentPath = GetPathForDate(this.currentDate);
+            FileInfo currentFileInfo = new FileInfo(currentPath);
+            if (!currentFileInfo.Exists)
             {
-                using (StreamReader readingStream = todayLog.OpenText())
+                currentFileInfo.Create().Close();
+            }
+
+            this.todayLabel.Content = Path.GetFileName(currentPath);
+
+            using (StreamReader readingStream = currentFileInfo.OpenText())
+            {
+                try
                 {
-                    today = new WorkDay(DateTime.Today, readingStream.ReadToEnd());
+                    WorkDay currentWorkDay = new WorkDay(DateTime.Today, readingStream.ReadToEnd());
+                    this.recordsList.Items.Clear();
+                    foreach (JobRecord jobRecord in currentWorkDay.GetRecords())
+                    {
+                        this.recordsList.Items.Add(jobRecord.GetDisplayString());
+                    }
+
+                    int totalMinutes = currentWorkDay.GetTotalMinutes();
+                    this.totalTimeLabel.Content = string.Format("{0:00}:{1:00}", totalMinutes / 60, totalMinutes % 60);
+                }
+                catch (JobRecordParseException e)
+                {
+                    MessageBox.Show(e.Message, string.Format("Unable to parse {0}, invalid format", Path.GetFileName(currentPath)), MessageBoxButton.OK, MessageBoxImage.Error);
+                    this.OpenInNotepad(currentPath);
                 }
             }
-            else
-            {
-                today = new WorkDay(DateTime.Today);
-            }
-
-            recordsList.Items.Clear();
-            foreach (JobRecord jobRecord in today.GetRecords())
-            {
-                recordsList.Items.Add(jobRecord.GetDisplayString());
-            }
-
-            int totalMinutes = today.GetTotalMinutes();
-
-            totalTimeLabel.Content = string.Format("{0:00}:{1:00}", totalMinutes / 60, totalMinutes % 60);
-            todayLabel.Content = todayFileName;
         }
 
-        public void CreateSamples()
+        private string GetPathForDate(DateTime date)
         {
-            // create new file everytime
-            using (StreamWriter writer = todayLog.CreateText())
-            {
-                today.AddRecord(new JobRecord(TimeSpan.Parse("18:27"), "VitMed", "Fix data bindings", TimeSpan.Parse("18:50")));
-                today.AddRecord(new JobRecord(TimeSpan.Parse("19:30"), "Laktát", "Reorganize partial classes in business objects", TimeSpan.Parse("20:30")));
-                writer.Write(today.GetSerializedString());
-            }
+            string todayFileName = date.ToString("dd. MM. yyyy") + ".txt";
+
+            DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\cendr\OneDrive\Dokumenty\joblog\");
+            return Path.Combine(saveLocation.ToString(), todayFileName);
         }
 
-        private void todayLabel_MouseDown(object sender, MouseButtonEventArgs e)
+        private void OpenInNotepad(string path)
         {
-            Process.Start("notepad.exe", todayPath);
+            Process.Start("notepad.exe", path);
         }
 
-        private void reloadButton_Click(object sender, RoutedEventArgs e)
+        private void TodayLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            reloadToday();
+            OpenInNotepad(this.GetPathForDate(this.currentDate));
+        }
+
+        private void ReloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            ReloadUI();
+        }
+
+        private void CurrentDateDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.currentDate = (DateTime)e.AddedItems[0];
+            this.ReloadUI();
         }
     }
 }
