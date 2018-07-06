@@ -57,6 +57,9 @@
     </ApplicationDefinition>
     <Compile Include="Formatting.cs" />
     <Compile Include="JobRecord.cs" />
+    <Compile Include="TeaTimer.xaml.cs">
+      <DependentUpon>TeaTimer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WorkDay.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -70,6 +73,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="TeaTimer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -97,6 +104,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\service-bell_daniel_simion.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

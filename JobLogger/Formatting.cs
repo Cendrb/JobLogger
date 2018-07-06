@@ -12,5 +12,10 @@ namespace JobLogger
         {
             return span.ToString("hh\\:mm");
         }
+
+        public static string ToMinutesSeconds(this TimeSpan span)
+        {
+            return span.ToString("mm\\:ss");
+        }
     }
 }

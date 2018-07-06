@@ -28,6 +28,17 @@ namespace JobLogger
 
             this.currentDate = DateTime.Today;
 
+            this.teaTimerGrid.Children.Add(new TeaTimer(new List<TimeSpan>()
+            {
+                new TimeSpan(0, 0, 15),
+                new TimeSpan(0, 0, 30),
+                new TimeSpan(0, 1, 0),
+                new TimeSpan(0, 1, 30),
+                new TimeSpan(0, 2, 0),
+                new TimeSpan(0, 3, 0),
+                new TimeSpan(0, 5, 0),
+            }));
+
             ReloadUI();
         }
 
@@ -68,7 +79,7 @@ namespace JobLogger
         {
             string todayFileName = date.ToString("dd. MM. yyyy") + ".txt";
 
-            DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\cendr\OneDrive\Dokumenty\joblog\");
+            DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\cendr\Documents\joblog\");
             return Path.Combine(saveLocation.ToString(), todayFileName);
         }
 
