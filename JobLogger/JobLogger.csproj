@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JobLogger</RootNamespace>
     <AssemblyName>JobLogger</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +36,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CookComputing.XmlRpcV2, Version=3.0.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Downloads\CookComputing.XmlRpcV2.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -60,6 +68,33 @@
     <Compile Include="TeaTimer.xaml.cs">
       <DependentUpon>TeaTimer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tickets\CustomTicketProperties.cs" />
+    <Compile Include="Tickets\StateQueue.cs" />
+    <Compile Include="Tickets\StateQueues.cs" />
+    <Compile Include="Tickets\States\CommonValidations.cs" />
+    <Compile Include="Tickets\States\MergingTicketState.cs" />
+    <Compile Include="Tickets\States\TestingTicketState.cs" />
+    <Compile Include="Tickets\States\EstimatingMeetingTicketState.cs" />
+    <Compile Include="Tickets\States\EstimatedTicketState.cs" />
+    <Compile Include="Tickets\States\EstimatingTicketState.cs" />
+    <Compile Include="Tickets\States\CodeReviewTicketState.cs" />
+    <Compile Include="Tickets\States\InternalCodeReviewTicketState.cs" />
+    <Compile Include="Tickets\States\AcceptedTicketState.cs" />
+    <Compile Include="Tickets\States\NewTicketState.cs" />
+    <Compile Include="Tickets\States\WaitingForSpecificationTicketState.cs" />
+    <Compile Include="Tickets\Ticket.cs" />
+    <Compile Include="Tickets\States\TicketState.cs" />
+    <Compile Include="Tickets\TicketControl.xaml.cs">
+      <DependentUpon>TicketControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tickets\TicketLoader.cs" />
+    <Compile Include="Tickets\TicketSerializableData.cs" />
+    <Compile Include="Tickets\TicketingControl.xaml.cs">
+      <DependentUpon>TicketingControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tickets\TicketPropertyValuePair.cs" />
+    <Compile Include="Tickets\TicketStateValidationMessage.cs" />
+    <Compile Include="Tickets\TicketStateValidationMessageSeverity.cs" />
     <Compile Include="WorkDay.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -74,6 +109,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="TeaTimer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tickets\TicketControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tickets\TicketingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,6 +139,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -107,6 +151,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\service-bell_daniel_simion.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MetaTracInterface\MetaTracInterface.csproj">
+      <Project>{ddad7c90-9b8e-4863-909b-b6169c1efa4e}</Project>
+      <Name>MetaTracInterface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
