@@ -19,9 +19,9 @@ namespace JobLogger.Tickets.States
             {
                 new TicketPropertyValuePair("Status", ticket.TracTicket.Status.ToString()),
                 new TicketPropertyValuePair("Feature branch", ticket.TracTicket.FeatureBranch),
-                new TicketPropertyValuePair("Target version: ", ticket.TracTicket.TargetVersion),
-                new TicketPropertyValuePair("Business value: ", ticket.TracTicket.BusinessValue.ToString()),
-                new TicketPropertyValuePair("Total hours: ", ticket.TracTicket.TotalHours.ToString()),
+                new TicketPropertyValuePair("Target version", ticket.TracTicket.TargetVersion),
+                new TicketPropertyValuePair("Business value", ticket.TracTicket.BusinessValue.ToString()),
+                new TicketPropertyValuePair("Total hours", ticket.TracTicket.TotalHours.ToString()),
             };
         }
 
@@ -41,7 +41,7 @@ namespace JobLogger.Tickets.States
 
             if (ticket.TracTicket.Status != TicketStatus.CodeReview)
             {
-                list.Add(new TicketStateValidationMessage("Should be code_review", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be code_review (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
             }
 
             if (ticket.TracTicket.Status == TicketStatus.CodeReviewPassed)

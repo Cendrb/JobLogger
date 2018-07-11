@@ -39,11 +39,21 @@ namespace JobLogger.Tickets.States
                 CommonValidations.TesterShouldBeAssigned,
                 CommonValidations.MilestoneShouldBeAssigned));
 
+            if(ticket.TicketProperties.POTQueuedUp && !ticket.TicketProperties.POTDone)
+            {
+                list.Add(new TicketStateValidationMessage(
+                    "POT in progress",
+                    "You've sent a request for POT of this ticket. Mark this as done when response comes back.",
+                    TicketStateValidationMessageSeverity.Info,
+                    new TicketStateValidationMessageAction("Done", innerTicket => innerTicket.TicketProperties.POTDone = true),
+                    new TicketStateValidationMessageAction("Failed", innerTicket => innerTicket.TicketProperties.POTQueuedUp = false)));
+            }
+
             if (ticket.TracTicket.Status != TicketStatus.Documenting || ticket.TracTicket.Status != TicketStatus.Closed)
             {
                 if (ticket.TracTicket.Status == TicketStatus.Reopened)
                 {
-                    list.Add(new TicketStateValidationMessage("Status", "Ticket reopened. Get back to work!", TicketStateValidationMessageSeverity.Alert));
+                    list.Add(new TicketStateValidationMessage("Ticket reopened", "Ticket reopened. Get back to work!", TicketStateValidationMessageSeverity.Alert));
                 }
                 else
                 {
@@ -51,18 +61,18 @@ namespace JobLogger.Tickets.States
                     {
                         if (ticket.TracTicket.Status != TicketStatus.Testing || ticket.TracTicket.Status != TicketStatus.CodeReviewPassed)
                         {
-                            list.Add(new TicketStateValidationMessage("Status", "Ticket should be testing or in code_review_passed (when doing preliminary POT)", TicketStateValidationMessageSeverity.Warning));
+                            list.Add(new TicketStateValidationMessage($"Should be in testing or CR passed (not {ticket.TracTicket.Status.ToString()})", "Ticket should be testing or in code_review_passed (when doing preliminary POT)", TicketStateValidationMessageSeverity.Warning));
                         }
                     }
                     else
                     {
                         if (ticket.TracTicket.Status == TicketStatus.CodeReviewPassed)
                         {
-                            list.Add(new TicketStateValidationMessage("Status", "POT is done. Switch this into testing", TicketStateValidationMessageSeverity.Alert));
+                            list.Add(new TicketStateValidationMessage($"Should be in testing (not {ticket.TracTicket.Status.ToString()})", "POT is done. Switch this into testing", TicketStateValidationMessageSeverity.Alert));
                         }
                         else if (ticket.TracTicket.Status != TicketStatus.Testing)
                         {
-                            list.Add(new TicketStateValidationMessage("Status", "Ticket should be in testing", TicketStateValidationMessageSeverity.Warning));
+                            list.Add(new TicketStateValidationMessage($"Should be in testing (not {ticket.TracTicket.Status.ToString()})", "Ticket should be in testing", TicketStateValidationMessageSeverity.Warning));
                         }
                     }
                 }
@@ -70,18 +80,18 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TicketProperties.POTDone && !ticket.TicketProperties.POTQueuedUp)
             {
-                list.Add(new TicketStateValidationMessage("POT", "You should ask for POT", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("Ask for POT", "You should ask for POT", TicketStateValidationMessageSeverity.Warning, new TicketStateValidationMessageAction("Done", innerTicket => innerTicket.TicketProperties.POTQueuedUp = true)));
             }
 
             if (!ticket.TracTicket.TestPlans.Any())
             {
-                list.Add(new TicketStateValidationMessage("Test plans", "No test plans attach. Send a mesage to a tester to create one.", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("No test plan", "No test plans attached. Send a mesage to a tester to create one.", TicketStateValidationMessageSeverity.Alert));
             }
             else
             {
                 if (!ticket.TracTicket.TestPlanReviewed)
                 {
-                    list.Add(new TicketStateValidationMessage("Test plans", "There is a test plan attached but you haven't verified it yet.", TicketStateValidationMessageSeverity.Alert));
+                    list.Add(new TicketStateValidationMessage($"Test plan (${ticket.TracTicket.TestPlans.First().FileName}) not reviewed", "There is a test plan attached but you haven't verified it yet.", TicketStateValidationMessageSeverity.Alert));
                 }
             }
 

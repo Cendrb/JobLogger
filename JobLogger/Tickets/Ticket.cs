@@ -28,9 +28,9 @@ namespace JobLogger.Tickets
             return this.CurrentState.GetPrimaryString(this);
         }
 
-        public string GetStateString()
+        public string GetStatusUpdatesString()
         {
-            return this.CurrentState.GetStateString(this);
+            return this.CurrentState.GetStatusUpdatesString(this);
         }
 
         public IEnumerable<TicketPropertyValuePair> GetPropertyValuePairs()

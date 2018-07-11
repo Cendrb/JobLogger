@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="Tickets\TicketPropertyValuePair.cs" />
     <Compile Include="Tickets\TicketStateValidationMessage.cs" />
+    <Compile Include="Tickets\TicketStateValidationMessageAction.cs" />
     <Compile Include="Tickets\TicketStateValidationMessageSeverity.cs" />
     <Compile Include="WorkDay.cs" />
     <Page Include="MainWindow.xaml">

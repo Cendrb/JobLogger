@@ -29,12 +29,12 @@ namespace JobLogger.Tickets.States
             List<TicketStateValidationMessage> list = new List<TicketStateValidationMessage>();
             if (!ticket.TracTicket.StatusUpdates.Any(statusUpdate => statusUpdate.Text.IndexOf("waiting", StringComparison.OrdinalIgnoreCase) > -1))
             {
-                list.Add(new TicketStateValidationMessage("Status updates", "You'd better add a status update that you are waiting for someone", TicketStateValidationMessageSeverity.Info));
+                list.Add(new TicketStateValidationMessage("Add a status about who are you waiting for", "You'd better add a status update that you are waiting for someone", TicketStateValidationMessageSeverity.Info));
             }
 
             if (!ticket.TracTicket.SprintAssignment.Equals("need-more-info-from-product-owner", StringComparison.Ordinal))
             {
-                list.Add(new TicketStateValidationMessage("Sprint assignment", "Ticket should be in the need-more-info-from-product-owner sprint", TicketStateValidationMessageSeverity.Info));
+                list.Add(new TicketStateValidationMessage($"Should be in need-more-info-from-product-owner (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the need-more-info-from-product-owner sprint", TicketStateValidationMessageSeverity.Info));
             }
 
             return list;

@@ -51,6 +51,21 @@ namespace MetaTracInterface
             return ParseTracTicket(ticketData);
         }
 
+        public TracTicket UpdateFeatureBranch(TracTicket tracTicket, string featureBranch)
+        {
+            object[] ticketData = this.ticketClient.UpdateTicket(
+                tracTicket.ID,
+                "Feature branch updated",
+                new
+                {
+                    action = "leave",
+                    feature_branch = featureBranch,
+                    summary = "Miscreated ticket"
+                });
+
+            return ParseTracTicket(ticketData);
+        }
+
         private static List<TicketAttachment> ParseAttachments(object[] attachmentsData)
         {
             List<TicketAttachment> attachments = new List<TicketAttachment>();
@@ -89,7 +104,7 @@ namespace MetaTracInterface
             {
                 BusinessValue = attributes.GetValue<decimal?>("businessvalue"),
                 Changed = updated,
-                ChangeTime = attributes.GetValue<DateTime>("changetime"),
+                ChangeTime = attributes.GetValue<DateTime>("changetime").ToLocalTime(),
                 Component = attributes.GetValue<string>("component"),
                 ConfigurationSettings = attributes.GetValue<string>("configsettings"),
                 Created = created,

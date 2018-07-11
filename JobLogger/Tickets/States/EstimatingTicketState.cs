@@ -27,7 +27,7 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TracTicket.SprintAssignment.Equals("estimate-needed", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint", StringComparison.Ordinal))
             {
-                list.Add(new TicketStateValidationMessage("Incorrect sprint assignment", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be in estimate-needed or ready-for-sprint (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.Warning));
             }
 
             return list;

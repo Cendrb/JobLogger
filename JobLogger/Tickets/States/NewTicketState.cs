@@ -35,12 +35,12 @@ namespace JobLogger.Tickets.States
 
             if (ticket.TracTicket.Remaining < 1)
             {
-                list.Add(new TicketStateValidationMessage("Remaining", "Ticket should have an estimate", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("Estimate missing", "Ticket should have an estimate", TicketStateValidationMessageSeverity.Warning));
             }
 
             if (ticket.TracTicket.Status != TicketStatus.New && ticket.TracTicket.Status != TicketStatus.Assigned)
             {
-                list.Add(new TicketStateValidationMessage("Incorrect status", "Ticket should be new or assigned", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be assigned or new (not {ticket.TracTicket.Status.ToString()})", "Ticket should be new or assigned", TicketStateValidationMessageSeverity.Warning));
             }
 
             return list;

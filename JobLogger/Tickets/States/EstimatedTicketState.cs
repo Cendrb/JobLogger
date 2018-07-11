@@ -27,7 +27,7 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TracTicket.SprintAssignment.Equals("estimated", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint-verified-by-programmer", StringComparison.Ordinal))
             {
-                list.Add(new TicketStateValidationMessage("Incorrect sprint-assignment", "Ticket should be in the estimated or ready-for-sprint-verified-by-programmer", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be in estimated or ready-for-sprint-verified-by-programmer (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimated or ready-for-sprint-verified-by-programmer", TicketStateValidationMessageSeverity.Warning));
             }
 
             if (ticket.TracTicket.Remaining < 1)

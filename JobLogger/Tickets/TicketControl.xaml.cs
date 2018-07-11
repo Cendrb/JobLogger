@@ -21,13 +21,15 @@ namespace JobLogger.Tickets
     /// </summary>
     partial class TicketControl : UserControl
     {
-        public event Action<Ticket> SaveRequired;
+        public event Action<Ticket> TicketChanged;
 
         private Ticket ticket;
 
         public TicketControl(Ticket ticket)
         {
             InitializeComponent();
+
+            this.TicketChanged += innerTicket => this.ReloadUI();
 
             this.ticket = ticket;
 
@@ -39,6 +41,7 @@ namespace JobLogger.Tickets
         private void ReloadUI()
         {
             this.primaryTitleLabel.Content = this.ticket.GetPrimaryString();
+            this.statusUpdatesTextBox.Text = this.ticket.GetStatusUpdatesString();
 
             this.propertiesStackPanel.Children.Clear();
             foreach (TicketPropertyValuePair pair in this.ticket.GetPropertyValuePairs())
@@ -61,7 +64,7 @@ namespace JobLogger.Tickets
             }
 
             this.warningsStackPanel.Children.Clear();
-            foreach (TicketStateValidationMessage message in this.ticket.ValidateTicket().OrderBy(message => message.Severity))
+            foreach (TicketStateValidationMessage message in this.ticket.ValidateTicket().OrderByDescending(message => message.Severity))
             {
                 Brush foregroundBrush;
                 if (message.Severity == TicketStateValidationMessageSeverity.Info)
@@ -77,9 +80,8 @@ namespace JobLogger.Tickets
                     foregroundBrush = new SolidColorBrush(Colors.DarkRed);
                 }
 
-                StackPanel stackPanel = new StackPanel();
-                stackPanel.Orientation = Orientation.Horizontal;
-                stackPanel.VerticalAlignment = VerticalAlignment.Top;
+                Grid grid = new Grid();
+                grid.VerticalAlignment = VerticalAlignment.Top;
                 Label leftLabel = new Label();
                 leftLabel.VerticalAlignment = VerticalAlignment.Top;
                 leftLabel.HorizontalAlignment = HorizontalAlignment.Left;
@@ -88,23 +90,37 @@ namespace JobLogger.Tickets
                 leftLabel.Padding = new Thickness(0, 0, 5, 0);
                 leftLabel.FontWeight = FontWeights.Bold;
                 leftLabel.ToolTip = message.Message;
-                stackPanel.Children.Add(leftLabel);
-                //TextBlock messageText = new TextBlock();
-                //messageText.VerticalAlignment = VerticalAlignment.Top;
-                //messageText.HorizontalAlignment = HorizontalAlignment.Left;
-                //messageText.Text = message.Message;
-                //messageText.Foreground = new SolidColorBrush(Colors.Black);
-                //messageText.Padding = new Thickness(0);
-                //stackPanel.Children.Add(messageText);
-                this.warningsStackPanel.Children.Add(stackPanel);
+                grid.Children.Add(leftLabel);
+                StackPanel rightActionStackPanel = new StackPanel();
+                rightActionStackPanel.Orientation = Orientation.Horizontal;
+                rightActionStackPanel.VerticalAlignment = VerticalAlignment.Top;
+                rightActionStackPanel.HorizontalAlignment = HorizontalAlignment.Right;
+                foreach (TicketStateValidationMessageAction action in message.Actions)
+                {
+                    TextBlock actionLabel = new TextBlock();
+                    actionLabel.Text = action.Title;
+                    actionLabel.Foreground = new SolidColorBrush(Colors.Black);
+                    actionLabel.TextDecorations.Add(TextDecorations.Underline);
+                    actionLabel.Cursor = Cursors.Hand;
+                    actionLabel.Margin = new Thickness(5, 0, 0, 0);
+                    actionLabel.MouseDown += (s, e) =>
+                    {
+                        action.Execute(this.ticket);
+                        this.TicketChanged?.Invoke(this.ticket);
+                    };
+
+                    rightActionStackPanel.Children.Add(actionLabel);
+                }
+
+                grid.Children.Add(rightActionStackPanel);
+                this.warningsStackPanel.Children.Add(grid);
             }
         }
 
         private void statesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.ticket.CurrentState = this.ticket.StateQueue[this.statesComboBox.SelectedIndex];
-            this.SaveRequired?.Invoke(this.ticket);
-            this.ReloadUI();
+            this.TicketChanged?.Invoke(this.ticket);
         }
 
         private void primaryTitleLabel_MouseDown(object sender, MouseButtonEventArgs e)

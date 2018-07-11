@@ -41,7 +41,7 @@ namespace JobLogger.Tickets.States
 
             if (ticket.TracTicket.Status != TicketStatus.CodeReview)
             {
-                list.Add(new TicketStateValidationMessage("Should be code_review", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be code_review (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
             }
 
             if (ticket.TracTicket.Status == TicketStatus.CodeReviewPassed)

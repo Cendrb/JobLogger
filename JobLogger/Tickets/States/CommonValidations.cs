@@ -25,7 +25,7 @@ namespace JobLogger.Tickets.States
 
             if (ticket.TracTicket.Remaining < 1)
             {
-                list.Add(new TicketStateValidationMessage("Remaining smaller than 1", "Ticket should have more than 0 in the Remaining field", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Remaining smaller than 1 ({ticket.TracTicket.Remaining})", "Ticket should have more than 0 in the Remaining field", TicketStateValidationMessageSeverity.Warning));
             }
 
             return list;
@@ -74,7 +74,11 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TicketProperties.NoConfigurationRequired && string.IsNullOrWhiteSpace(ticket.TracTicket.ConfigurationSettings))
             {
-                list.Add(new TicketStateValidationMessage("Missing configuration settings", "Either add configuration settings or select No configuration required", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage(
+                    "Missing configuration settings",
+                    "Either add configuration settings or select No configuration required",
+                    TicketStateValidationMessageSeverity.Warning,
+                    new TicketStateValidationMessageAction("Not needed", innerTicket => innerTicket.TicketProperties.NoConfigurationRequired = true)));
             }
 
             return list;
@@ -86,7 +90,11 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TicketProperties.NoInstallationRequired && string.IsNullOrWhiteSpace(ticket.TracTicket.InstallationNotes))
             {
-                list.Add(new TicketStateValidationMessage("Missing installation notes", "Either add installation notes or select No installation required", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage(
+                    "Missing installation notes",
+                    "Either add installation notes or select No installation required",
+                    TicketStateValidationMessageSeverity.Warning,
+                    new TicketStateValidationMessageAction("Not needed", innerTicket => innerTicket.TicketProperties.NoInstallationRequired = true)));
             }
 
             return list;
@@ -122,7 +130,7 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TracTicket.Milestone.Contains("."))
             {
-                list.Add(new TicketStateValidationMessage("Milestone", "You need to assign a milestone", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Non-production milestone (current: {ticket.TracTicket.Milestone})", "You need to assign a milestone", TicketStateValidationMessageSeverity.Warning));
             }
 
             return list;

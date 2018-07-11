@@ -94,7 +94,7 @@ namespace JobLogger.Tickets
                 contextMenu.Items.Add(menuItem);
                 ticketControl.ContextMenu = contextMenu;
                 this.ticketsStackPanel.Children.Add(ticketControl);
-                ticketControl.SaveRequired += t => this.ticketLoader.Save(this.tickets);
+                ticketControl.TicketChanged += t => this.ticketLoader.Save(this.tickets);
             }
         }
 
@@ -110,7 +110,7 @@ namespace JobLogger.Tickets
                 int ticketID;
                 if (int.TryParse(this.ticketNumberTextBox.Text, out ticketID) && this.queueSelectComboBox.SelectedItem != null)
                 {
-                    if (this.tickets.Any(ticket => ticket.TracTicket.ID != ticketID))
+                    if (!this.tickets.Any() || this.tickets.Any(ticket => ticket.TracTicket.ID != ticketID))
                     {
                         StateQueue queue = this.stateQueues[this.queueSelectComboBox.SelectedIndex];
                         this.tickets.Add(this.ticketLoader.CreateNew(ticketID, queue));

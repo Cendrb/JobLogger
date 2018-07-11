@@ -11,7 +11,12 @@
 
         <StackPanel Margin="0,18,0,8">
             <StackPanel x:Name="warningsStackPanel" VerticalAlignment="Top"/>
-            <StackPanel x:Name="propertiesStackPanel" VerticalAlignment="Top"/>
+            <Expander Header="More">
+                <StackPanel>
+                    <StackPanel x:Name="propertiesStackPanel" VerticalAlignment="Top"/>
+                    <TextBox x:Name="statusUpdatesTextBox" Background="Transparent" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Expander>
         </StackPanel>
         <ComboBox x:Name="statesComboBox" HorizontalAlignment="Right" VerticalAlignment="Top" Width="53" SelectionChanged="statesComboBox_SelectionChanged" Padding="6,1,5,1"/>
     </Grid>

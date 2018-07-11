@@ -153,11 +153,11 @@ namespace MetaTracInterface.Helpers
                     string text;
                     if (openingBracketIndex > -1 && closingBracketIndex > -1)
                     {
-                        text = statusUpdateString.Substring(closingBracketIndex + 1);
+                        text = statusUpdateString.Substring(closingBracketIndex + 1).Trim();
                     }
                     else
                     {
-                        text = statusUpdateString;
+                        text = statusUpdateString.Trim();
                     }
 
                     ticketStatusUpdates.Add(new TicketStatusUpdate()

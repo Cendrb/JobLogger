@@ -23,35 +23,9 @@ namespace JobLogger.Tickets.States
             return $"#{ticket.TracTicket.ID} {ticket.TracTicket.Summary}";
         }
 
-        public virtual string GetStateString(Ticket ticket)
+        public virtual string GetStatusUpdatesString(Ticket ticket)
         {
-            switch (ticket.TracTicket.Status)
-            {
-                case TicketStatus.New:
-                    return "new";
-                case TicketStatus.Assigned:
-                    return "assigned";
-                case TicketStatus.Accepted:
-                    return "accepted";
-                case TicketStatus.CodeReview:
-                    return "code review";
-                case TicketStatus.CodeReviewPassed:
-                    return "CR passed";
-                case TicketStatus.CodeReviewFailed:
-                    return "CR failed";
-                case TicketStatus.Testing:
-                    return "testing";
-                case TicketStatus.Reopened:
-                    return "reopened";
-                case TicketStatus.Closed:
-                    return "closed";
-                case TicketStatus.Documenting:
-                    return "documenting";
-                case TicketStatus.Unknown:
-                    return "wtf";
-                default:
-                    return "wtf";
-            }
+            return string.Join(Environment.NewLine, ticket.TracTicket.StatusUpdates.Select(statusUpdate => $"{statusUpdate.DateTime:MM/dd/yy} ({statusUpdate.AuthorAbbreviation}) {statusUpdate.Text}"));
         }
 
         public abstract IEnumerable<TicketPropertyValuePair> GetPropertyValuePairs(Ticket ticket);
