@@ -39,11 +39,6 @@ namespace JobLogger.Tickets.States
                 CommonValidations.TesterShouldBeAssigned,
                 CommonValidations.MilestoneShouldBeAssigned));
 
-            if (ticket.TracTicket.Status != TicketStatus.CodeReviewPassed)
-            {
-                list.Add(new TicketStateValidationMessage("Should be code_review_passed", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
-            }
-
             if (ticket.TracTicket.Status != TicketStatus.Documenting || ticket.TracTicket.Status != TicketStatus.Closed)
             {
                 if (ticket.TracTicket.Status == TicketStatus.Reopened)
