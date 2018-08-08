@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace JobLogger.Tickets
         {
             InitializeComponent();
 
-            this.ticketLoader = new TicketLoader(@"c:\Users\cendr\Documents\joblog\tickets.txt", "cdrbal", "tracHESLO", this.stateQueues);
+            this.ticketLoader = new TicketLoader(System.IO.Path.Combine(ConfigurationManager.AppSettings["MainFolder"], "tickets.txt"), ConfigurationManager.AppSettings["TracUsername"], ConfigurationManager.AppSettings["TracPassword"], this.stateQueues);
 
             this.queueSelectComboBox.ItemsSource = this.stateQueues.Select(queue => queue.Name);
             this.queueSelectComboBox.SelectedIndex = 0;

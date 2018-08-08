@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -83,7 +84,7 @@ namespace JobLogger
         {
             string todayFileName = date.ToString("dd. MM. yyyy") + ".txt";
 
-            DirectoryInfo saveLocation = new DirectoryInfo(@"c:\Users\cendr\Documents\joblog\");
+            DirectoryInfo saveLocation = new DirectoryInfo(ConfigurationManager.AppSettings["MainFolder"]);
             return Path.Combine(saveLocation.ToString(), todayFileName);
         }
 

@@ -59,7 +59,7 @@ namespace JobLogger.Tickets.States
                 {
                     if (!ticket.TicketProperties.POTDone)
                     {
-                        if (ticket.TracTicket.Status != TicketStatus.Testing || ticket.TracTicket.Status != TicketStatus.CodeReviewPassed)
+                        if (ticket.TracTicket.Status != TicketStatus.Testing && ticket.TracTicket.Status != TicketStatus.CodeReviewPassed)
                         {
                             list.Add(new TicketStateValidationMessage($"Should be in testing or CR passed (not {ticket.TracTicket.Status.ToString()})", "Ticket should be testing or in code_review_passed (when doing preliminary POT)", TicketStateValidationMessageSeverity.Warning));
                         }
