@@ -18,6 +18,7 @@ namespace JobLogger.Tickets.States
             {
                 new TicketPropertyValuePair("Target version: ", ticket.TracTicket.TargetVersion),
                 new TicketPropertyValuePair("Business value: ", ticket.TracTicket.BusinessValue.ToString()),
+                new TicketPropertyValuePair("Estimate", ticket.TracTicket.Remaining.ToString())
             };
         }
 
@@ -30,9 +31,9 @@ namespace JobLogger.Tickets.States
                 "You can now hide this ticket from your dashboard",
                 TicketStateValidationMessageSeverity.ActionNeeded,
                 new TicketStateValidationMessageAction("Hide", innerTicket => innerTicket.MarkAsDone()),
-                new TicketStateValidationMessageAction("Reopen - back to estimating", innerTicket => innerTicket.ReopenToEstimating())));
+                new TicketStateValidationMessageAction("Re-estimate", innerTicket => innerTicket.ReopenToEstimating())));
 
-            if (!ticket.TracTicket.SprintAssignment.Equals("estimated", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint-verified-by-programmer", StringComparison.Ordinal))
+            if (!ticket.TracTicket.SprintAssignment.Equals("estimated", StringComparison.Ordinal) && !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint-verified-by-programmer", StringComparison.Ordinal))
             {
                 list.Add(new TicketStateValidationMessage($"Should be in estimated or ready-for-sprint-verified-by-programmer (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimated or ready-for-sprint-verified-by-programmer", TicketStateValidationMessageSeverity.ActionNeeded));
             }

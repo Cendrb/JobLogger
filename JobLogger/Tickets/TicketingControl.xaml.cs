@@ -28,7 +28,7 @@ namespace JobLogger.Tickets
         private StateQueues stateQueues = new StateQueues()
         {
             new StateQueue("Development", TicketStateRegistry.Instance.Get<ProgrammingTicketState>()),
-            new StateQueue("Estimating", TicketStateRegistry.Instance.Get<EstimatingMeetingTicketState>())
+            new StateQueue("Estimating", TicketStateRegistry.Instance.Get<EstimatingTicketState>())
         };
 
         public TicketingControl()

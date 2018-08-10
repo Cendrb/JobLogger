@@ -18,6 +18,7 @@ namespace JobLogger.Tickets.States
             {
                 new TicketPropertyValuePair("Target version: ", ticket.TracTicket.TargetVersion),
                 new TicketPropertyValuePair("Business value: ", ticket.TracTicket.BusinessValue.ToString()),
+                new TicketPropertyValuePair("Estimate", ticket.TracTicket.Remaining.ToString())
             };
         }
 
@@ -41,10 +42,15 @@ namespace JobLogger.Tickets.States
                     "Send a message to Slack and organize a estimate meeting",
                     TicketStateValidationMessageSeverity.ActionNeeded,
                     new TicketStateValidationMessageAction("Done", innerTicket => innerTicket.EstimateMeetingOrganized()),
-                    new TicketStateValidationMessageAction("Reopen - back to estimating", innerTicket => innerTicket.ReopenToEstimating())));
+                    new TicketStateValidationMessageAction("Re-estimate", innerTicket => innerTicket.ReopenToEstimating())));
             }
 
-            if (!ticket.TracTicket.SprintAssignment.Equals("estimate-needed", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint", StringComparison.Ordinal))
+            if (ticket.TracTicket.Remaining != 0)
+            {
+                list.Add(new TicketStateValidationMessage("Remaining shouldn't be 0", "You should set an estimate", TicketStateValidationMessageSeverity.ActionNeeded));
+            }
+
+            if (!ticket.TracTicket.SprintAssignment.Equals("estimate-needed", StringComparison.Ordinal) && !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint", StringComparison.Ordinal))
             {
                 list.Add(new TicketStateValidationMessage($"Should be in estimate-needed or ready-for-sprint (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.ActionNeeded));
             }

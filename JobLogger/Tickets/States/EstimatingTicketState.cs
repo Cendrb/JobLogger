@@ -18,6 +18,7 @@ namespace JobLogger.Tickets.States
             {
                 new TicketPropertyValuePair("Target version: ", ticket.TracTicket.TargetVersion),
                 new TicketPropertyValuePair("Business value: ", ticket.TracTicket.BusinessValue.ToString()),
+                new TicketPropertyValuePair("Estimate", ticket.TracTicket.Remaining.ToString())
             };
         }
 
@@ -32,7 +33,7 @@ namespace JobLogger.Tickets.States
                 new TicketStateValidationMessageAction("Done", innerTicket => innerTicket.Estimated()),
                 new TicketStateValidationMessageAction("Incomplete specification", innerTicket => innerTicket.IncompleteSpecificationForEstimating())));
 
-            if (!ticket.TracTicket.SprintAssignment.Equals("estimate-needed", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint", StringComparison.Ordinal))
+            if (!ticket.TracTicket.SprintAssignment.Equals("estimate-needed", StringComparison.Ordinal) && !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint", StringComparison.Ordinal))
             {
                 list.Add(new TicketStateValidationMessage($"Should be in estimate-needed or ready-for-sprint (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.ActionNeeded));
             }
