@@ -148,12 +148,12 @@ namespace JobLogger.Tickets
 
         public void EstimateSpecificationReceived()
         {
-            this.CurrentState = TicketStateRegistry.Instance.Get<ProgrammingTicketState>();
+            this.CurrentState = TicketStateRegistry.Instance.Get<EstimatingTicketState>();
         }
 
         public void ProgrammingSpecificationReceived()
         {
-            this.CurrentState = TicketStateRegistry.Instance.Get<EstimatingTicketState>();
+            this.CurrentState = TicketStateRegistry.Instance.Get<ProgrammingTicketState>();
         }
 
         public void BuildFinishedSuccessfully()
