@@ -8,14 +8,14 @@ namespace JobLogger.Tickets
 {
     public class TicketStateValidationMessage
     {
-        public string AffectedField { get; private set; }
+        public string Title { get; private set; }
         public string Message { get; private set; }
         public TicketStateValidationMessageSeverity Severity { get; private set; }
         public IReadOnlyList<TicketStateValidationMessageAction> Actions { get; private set; }
 
-        public TicketStateValidationMessage(string affectedField, string message, TicketStateValidationMessageSeverity severity, params TicketStateValidationMessageAction[] actions)
+        public TicketStateValidationMessage(string title, string message, TicketStateValidationMessageSeverity severity, params TicketStateValidationMessageAction[] actions)
         {
-            this.AffectedField = affectedField;
+            this.Title = title;
             this.Message = message;
             this.Severity = severity;
             this.Actions = new List<TicketStateValidationMessageAction>(actions);

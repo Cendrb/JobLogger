@@ -25,17 +25,19 @@ namespace JobLogger.Tickets.States
         {
             List<TicketStateValidationMessage> list = new List<TicketStateValidationMessage>();
 
+            list.Add(new TicketStateValidationMessage(
+                "Estimating",
+                "No one is gonna do this for you",
+                TicketStateValidationMessageSeverity.ActionNeeded,
+                new TicketStateValidationMessageAction("Done", innerTicket => innerTicket.Estimated()),
+                new TicketStateValidationMessageAction("Incomplete specification", innerTicket => innerTicket.IncompleteSpecificationForEstimating())));
+
             if (!ticket.TracTicket.SprintAssignment.Equals("estimate-needed", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint", StringComparison.Ordinal))
             {
-                list.Add(new TicketStateValidationMessage($"Should be in estimate-needed or ready-for-sprint (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be in estimate-needed or ready-for-sprint (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
-        }
-
-        public override bool IsDone(Ticket ticket)
-        {
-            return false;
         }
     }
 }

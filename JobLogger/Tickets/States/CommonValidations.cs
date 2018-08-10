@@ -25,7 +25,7 @@ namespace JobLogger.Tickets.States
 
             if (ticket.TracTicket.Remaining < 1)
             {
-                list.Add(new TicketStateValidationMessage($"Remaining smaller than 1 ({ticket.TracTicket.Remaining})", "Ticket should have more than 0 in the Remaining field", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Remaining smaller than 1 ({ticket.TracTicket.Remaining})", "Ticket should have more than 0 in the Remaining field", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
@@ -37,7 +37,7 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TracTicket.SprintAssignment.StartsWith("sprint", StringComparison.OrdinalIgnoreCase))
             {
-                list.Add(new TicketStateValidationMessage("Not in a sprint", "Ticket should be in a sprint", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("Not in a sprint", "Ticket should be in a sprint", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
@@ -49,7 +49,7 @@ namespace JobLogger.Tickets.States
 
             if (string.IsNullOrWhiteSpace(ticket.TracTicket.FeatureBranch))
             {
-                list.Add(new TicketStateValidationMessage("Missing feature branch", "You should get a feature branch", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("Missing feature branch", "You should get a feature branch", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
@@ -62,7 +62,7 @@ namespace JobLogger.Tickets.States
 
             if (string.IsNullOrWhiteSpace(ticket.TracTicket.TechnicalNotes))
             {
-                list.Add(new TicketStateValidationMessage("Missing technical notes", "Technical notes should be present", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("Missing technical notes", "Technical notes should be present", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
@@ -77,8 +77,8 @@ namespace JobLogger.Tickets.States
                 list.Add(new TicketStateValidationMessage(
                     "Missing configuration settings",
                     "Either add configuration settings or select No configuration required",
-                    TicketStateValidationMessageSeverity.Warning,
-                    new TicketStateValidationMessageAction("Not needed", innerTicket => innerTicket.TicketProperties.NoConfigurationRequired = true)));
+                    TicketStateValidationMessageSeverity.ActionNeeded,
+                    new TicketStateValidationMessageAction("Not needed", innerTicket => innerTicket.NoConfigurationNeeded())));
             }
 
             return list;
@@ -93,8 +93,8 @@ namespace JobLogger.Tickets.States
                 list.Add(new TicketStateValidationMessage(
                     "Missing installation notes",
                     "Either add installation notes or select No installation required",
-                    TicketStateValidationMessageSeverity.Warning,
-                    new TicketStateValidationMessageAction("Not needed", innerTicket => innerTicket.TicketProperties.NoInstallationRequired = true)));
+                    TicketStateValidationMessageSeverity.ActionNeeded,
+                    new TicketStateValidationMessageAction("Not needed", innerTicket => innerTicket.NoInstallationNeeded())));
             }
 
             return list;
@@ -106,7 +106,7 @@ namespace JobLogger.Tickets.States
 
             if (string.IsNullOrWhiteSpace(ticket.TracTicket.HowToQA))
             {
-                list.Add(new TicketStateValidationMessage("How to QA missing", "How to QA should be present", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("How to QA missing", "How to QA should be present", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
@@ -118,7 +118,7 @@ namespace JobLogger.Tickets.States
 
             if (string.IsNullOrWhiteSpace(ticket.TracTicket.QaBY) || ticket.TracTicket.QaBY.Equals("--Please select--", StringComparison.OrdinalIgnoreCase))
             {
-                list.Add(new TicketStateValidationMessage("No tester assigned", "Get a tester assigned to this", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("No tester assigned", "Get a tester assigned to this", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
@@ -130,7 +130,7 @@ namespace JobLogger.Tickets.States
 
             if (!ticket.TracTicket.Milestone.Contains("."))
             {
-                list.Add(new TicketStateValidationMessage($"Non-production milestone (current: {ticket.TracTicket.Milestone})", "You need to assign a milestone", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Non-production milestone (current: {ticket.TracTicket.Milestone})", "You need to assign a milestone", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;

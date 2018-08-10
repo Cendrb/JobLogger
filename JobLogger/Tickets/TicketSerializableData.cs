@@ -10,7 +10,6 @@ namespace JobLogger.Tickets
     {
         public int ID { get; set; }
         public string StatusCode { get; set; }
-        public string StateQueue { get; set; }
         public CustomTicketProperties TicketProperties { get; set; }
     }
 }

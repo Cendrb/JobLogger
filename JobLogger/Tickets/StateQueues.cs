@@ -9,18 +9,5 @@ namespace JobLogger.Tickets
 {
     class StateQueues : List<StateQueue>
     {
-        public TicketState FindTicketState(string code)
-        {
-            foreach(StateQueue queue in this)
-            {
-                TicketState ticketState = queue.FindTicketState(code);
-                if(ticketState != null)
-                {
-                    return ticketState;
-                }
-            }
-
-            return null;
-        }
     }
 }

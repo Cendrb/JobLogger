@@ -39,27 +39,19 @@ namespace JobLogger.Tickets.States
                CommonValidations.TesterShouldBeAssigned,
                CommonValidations.MilestoneShouldBeAssigned));
 
+            list.Add(new TicketStateValidationMessage(
+                "Waiting for internal code review",
+                "Still waiting",
+                TicketStateValidationMessageSeverity.Waiting,
+                new TicketStateValidationMessageAction("Passed", innerTicket => innerTicket.InternalCodeReviewPassed()),
+                new TicketStateValidationMessageAction("Failed", innerTicket => innerTicket.ReopenToProgramming())));
+
             if (ticket.TracTicket.Status != TicketStatus.CodeReview)
             {
-                list.Add(new TicketStateValidationMessage($"Should be code_review (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
-            }
-
-            if (ticket.TracTicket.Status == TicketStatus.CodeReviewPassed)
-            {
-                list.Add(new TicketStateValidationMessage("CR passed, merge the ticket", "Your ticket passed code review. Merge it.", TicketStateValidationMessageSeverity.Alert));
-            }
-
-            if (ticket.TracTicket.Status == TicketStatus.CodeReviewFailed)
-            {
-                list.Add(new TicketStateValidationMessage("CR failed", "Your ticket failed code review. Time to go back to development.", TicketStateValidationMessageSeverity.Alert));
+                list.Add(new TicketStateValidationMessage($"Should be code_review (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
-        }
-
-        public override bool IsDone(Ticket ticket)
-        {
-            return false;
         }
     }
 }

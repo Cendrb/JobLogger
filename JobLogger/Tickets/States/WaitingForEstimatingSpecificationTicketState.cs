@@ -7,9 +7,9 @@ using MetaTracInterface;
 
 namespace JobLogger.Tickets.States
 {
-    class WaitingForSpecificationTicketState : TicketState
+    class WaitingForEstimatingSpecificationTicketState : TicketState
     {
-        public WaitingForSpecificationTicketState() : base("Waiting for specification", "WFS")
+        public WaitingForEstimatingSpecificationTicketState() : base("Waiting for specification", "WFSE")
         {
         }
 
@@ -18,7 +18,6 @@ namespace JobLogger.Tickets.States
             return new List<TicketPropertyValuePair>()
             {
                 new TicketPropertyValuePair("Status", ticket.TracTicket.Status.ToString()),
-                new TicketPropertyValuePair("Waiting for: ", $"{ticket.TicketProperties.WaitingForName} - {ticket.TicketProperties.WaitingForMessage}"),
                 new TicketPropertyValuePair("Target version: ", ticket.TracTicket.TargetVersion),
                 new TicketPropertyValuePair("Business value: ", ticket.TracTicket.BusinessValue.ToString()),
             };
@@ -27,22 +26,24 @@ namespace JobLogger.Tickets.States
         public override IEnumerable<TicketStateValidationMessage> ValidateTicket(Ticket ticket)
         {
             List<TicketStateValidationMessage> list = new List<TicketStateValidationMessage>();
+
+            list.Add(new TicketStateValidationMessage(
+                "Waiting for specification",
+                "Waiting for the product owner to provide more info",
+                TicketStateValidationMessageSeverity.Waiting,
+                new TicketStateValidationMessageAction("Specification received", innerTicket => innerTicket.EstimateSpecificationReceived())));
+
             if (!ticket.TracTicket.StatusUpdates.Any(statusUpdate => statusUpdate.Text.IndexOf("waiting", StringComparison.OrdinalIgnoreCase) > -1))
             {
-                list.Add(new TicketStateValidationMessage("Add a status about who are you waiting for", "You'd better add a status update that you are waiting for someone", TicketStateValidationMessageSeverity.Info));
+                list.Add(new TicketStateValidationMessage("Add a status about who are you waiting for", "You'd better add a status update that you are waiting for someone", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             if (!ticket.TracTicket.SprintAssignment.Equals("need-more-info-from-product-owner", StringComparison.Ordinal))
             {
-                list.Add(new TicketStateValidationMessage($"Should be in need-more-info-from-product-owner (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the need-more-info-from-product-owner sprint", TicketStateValidationMessageSeverity.Info));
+                list.Add(new TicketStateValidationMessage($"Should be in need-more-info-from-product-owner (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the need-more-info-from-product-owner sprint", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
-        }
-
-        public override bool IsDone(Ticket ticket)
-        {
-            return false;
         }
     }
 }

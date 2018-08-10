@@ -12,7 +12,7 @@ namespace JobLogger.Tickets.States
         public string Name { get; private set; }
         public string Code { get; private set; }
 
-        public TicketState(string name, string code)
+        protected TicketState(string name, string code)
         {
             this.Name = name;
             this.Code = code;
@@ -31,7 +31,5 @@ namespace JobLogger.Tickets.States
         public abstract IEnumerable<TicketPropertyValuePair> GetPropertyValuePairs(Ticket ticket);
 
         public abstract IEnumerable<TicketStateValidationMessage> ValidateTicket(Ticket ticket);
-
-        public abstract bool IsDone(Ticket ticket);
     }
 }

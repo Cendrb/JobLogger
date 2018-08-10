@@ -7,9 +7,9 @@ using MetaTracInterface;
 
 namespace JobLogger.Tickets.States
 {
-    class MergingTicketState : TicketState
+    class MergedTicketState : TicketState
     {
-        public MergingTicketState() : base("Merging", "MERG")
+        public MergedTicketState() : base("Merged", "MERG")
         {
         }
 
@@ -39,17 +39,19 @@ namespace JobLogger.Tickets.States
                 CommonValidations.HowToQAShouldBePresent,
                 CommonValidations.TesterShouldBeAssigned));
 
-            if (ticket.TracTicket.Status != TicketStatus.CodeReviewPassed)
+            list.Add(new TicketStateValidationMessage(
+                "Check the build",
+                "Check whether the build has finished",
+                TicketStateValidationMessageSeverity.ActionNeeded,
+                new TicketStateValidationMessageAction("Successful", innerTicket => innerTicket.BuildFinishedSuccessfully()),
+                new TicketStateValidationMessageAction("Failed", innerTicket => innerTicket.BuildFailed())));
+
+            if (ticket.TracTicket.Status != TicketStatus.CodeReviewPassed && !ticket.TicketProperties.SkipCodeReview)
             {
-                list.Add(new TicketStateValidationMessage($"Should be code_review_passed (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be code_review_passed (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
-        }
-
-        public override bool IsDone(Ticket ticket)
-        {
-            return false;
         }
     }
 }

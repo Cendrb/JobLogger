@@ -25,17 +25,31 @@ namespace JobLogger.Tickets.States
         {
             List<TicketStateValidationMessage> list = new List<TicketStateValidationMessage>();
 
+            if (ticket.TicketProperties.EstimateMeetingOrganized)
+            {
+                list.Add(new TicketStateValidationMessage(
+                    "Waiting for the estimate meeting",
+                    "Just wait for it to happen",
+                    TicketStateValidationMessageSeverity.Waiting,
+                    new TicketStateValidationMessageAction("Passed", innerTicket => innerTicket.EstimateMeetingPassed()),
+                    new TicketStateValidationMessageAction("Failed", innerTicket => innerTicket.EstimateMeetingFailed())));
+            }
+            else
+            {
+                list.Add(new TicketStateValidationMessage(
+                    "Organize an estimate meeting",
+                    "Send a message to Slack and organize a estimate meeting",
+                    TicketStateValidationMessageSeverity.ActionNeeded,
+                    new TicketStateValidationMessageAction("Done", innerTicket => innerTicket.EstimateMeetingOrganized()),
+                    new TicketStateValidationMessageAction("Reopen - back to estimating", innerTicket => innerTicket.ReopenToEstimating())));
+            }
+
             if (!ticket.TracTicket.SprintAssignment.Equals("estimate-needed", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint", StringComparison.Ordinal))
             {
-                list.Add(new TicketStateValidationMessage($"Should be in estimate-needed or ready-for-sprint (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be in estimate-needed or ready-for-sprint (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimate-needed or ready-for-sprint", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
-        }
-
-        public override bool IsDone(Ticket ticket)
-        {
-            return false;
         }
     }
 }

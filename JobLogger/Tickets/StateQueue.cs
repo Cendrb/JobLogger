@@ -7,26 +7,15 @@ using JobLogger.Tickets.States;
 
 namespace JobLogger.Tickets
 {
-    public class StateQueue : List<TicketState>
+    public class StateQueue
     {
-        public string Name { get; private set; }
+        public string Name { get; }
+        public TicketState InitialState { get; }
 
-        public StateQueue(string name)
+        public StateQueue(string name, TicketState initialState)
         {
             this.Name = name;
-        }
-
-        public TicketState FindTicketState(string code)
-        {
-            foreach (TicketState state in this)
-            {
-                if (state.Code.Equals(code, StringComparison.OrdinalIgnoreCase))
-                {
-                    return state;
-                }
-            }
-
-            return null;
+            this.InitialState = initialState;
         }
     }
 }

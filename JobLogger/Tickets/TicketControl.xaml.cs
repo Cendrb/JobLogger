@@ -33,15 +33,15 @@ namespace JobLogger.Tickets
 
             this.ticket = ticket;
 
-            this.statesComboBox.ItemsSource = this.ticket.StateQueue.Select(state => state.Code);
-
-            this.statesComboBox.SelectedIndex = this.ticket.StateQueue.IndexOf(this.ticket.CurrentState);
+            this.ReloadUI();
         }
 
         private void ReloadUI()
         {
             this.primaryTitleLabel.Content = this.ticket.GetPrimaryString();
             this.statusUpdatesTextBox.Text = this.ticket.GetStatusUpdatesString();
+            this.currentStateLabel.Content = this.ticket.CurrentState.Code;
+            this.currentStateLabel.ToolTip = this.ticket.CurrentState.Name;
 
             this.propertiesStackPanel.Children.Clear();
             foreach (TicketPropertyValuePair pair in this.ticket.GetPropertyValuePairs())
@@ -67,17 +67,17 @@ namespace JobLogger.Tickets
             foreach (TicketStateValidationMessage message in this.ticket.ValidateTicket().OrderByDescending(message => message.Severity))
             {
                 Brush foregroundBrush;
-                if (message.Severity == TicketStateValidationMessageSeverity.Info)
+                if (message.Severity == TicketStateValidationMessageSeverity.Waiting)
                 {
                     foregroundBrush = new SolidColorBrush(Colors.Blue);
                 }
-                else if (message.Severity == TicketStateValidationMessageSeverity.Warning)
+                else if (message.Severity == TicketStateValidationMessageSeverity.ActionNeeded)
                 {
                     foregroundBrush = new SolidColorBrush(Colors.Orange);
                 }
                 else
                 {
-                    foregroundBrush = new SolidColorBrush(Colors.DarkRed);
+                    foregroundBrush = new SolidColorBrush(Colors.OrangeRed);
                 }
 
                 Grid grid = new Grid();
@@ -85,7 +85,7 @@ namespace JobLogger.Tickets
                 Label leftLabel = new Label();
                 leftLabel.VerticalAlignment = VerticalAlignment.Top;
                 leftLabel.HorizontalAlignment = HorizontalAlignment.Left;
-                leftLabel.Content = message.AffectedField;
+                leftLabel.Content = message.Title;
                 leftLabel.Foreground = foregroundBrush;
                 leftLabel.Padding = new Thickness(0, 0, 5, 0);
                 leftLabel.FontWeight = FontWeights.Bold;
@@ -115,12 +115,6 @@ namespace JobLogger.Tickets
                 grid.Children.Add(rightActionStackPanel);
                 this.warningsStackPanel.Children.Add(grid);
             }
-        }
-
-        private void statesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.ticket.CurrentState = this.ticket.StateQueue[this.statesComboBox.SelectedIndex];
-            this.TicketChanged?.Invoke(this.ticket);
         }
 
         private void primaryTitleLabel_MouseDown(object sender, MouseButtonEventArgs e)

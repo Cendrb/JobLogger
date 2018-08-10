@@ -27,23 +27,8 @@ namespace JobLogger.Tickets
 
         private StateQueues stateQueues = new StateQueues()
         {
-            new StateQueue("Development")
-            {
-                new WaitingForSpecificationTicketState(),
-                new NewTicketState(),
-                new AcceptedTicketState(),
-                new InternalCodeReviewTicketState(),
-                new CodeReviewTicketState(),
-                new MergingTicketState(),
-                new TestingTicketState()
-            },
-            new StateQueue("Estimating")
-            {
-                new WaitingForSpecificationTicketState(),
-                new EstimatingTicketState(),
-                new EstimatingMeetingTicketState(),
-                new EstimatedTicketState()
-            }
+            new StateQueue("Development", TicketStateRegistry.Instance.Get<ProgrammingTicketState>()),
+            new StateQueue("Estimating", TicketStateRegistry.Instance.Get<EstimatingMeetingTicketState>())
         };
 
         public TicketingControl()
@@ -61,20 +46,26 @@ namespace JobLogger.Tickets
         private async void ReloadTickets()
         {
             this.loadButton.IsEnabled = false;
+            this.includeDoneCheckBox.IsEnabled = false;
             this.loadButton.Content = "Loading...";
 
             this.tickets = new List<Ticket>();
 
             this.ReloadUI();
 
+            bool includeDoneTickets = this.includeDoneCheckBox.IsChecked.GetValueOrDefault();
+
             await Task.Factory.StartNew(() =>
             {
-                this.tickets = this.ticketLoader.Load().ToList();
+                foreach (Ticket ticket in this.ticketLoader.Load(includeDoneTickets))
+                {
+                    this.tickets.Add(ticket);
+                    this.Dispatcher.Invoke(() => this.AddTicketToUI(ticket));
+                }
             });
-            
-            this.ReloadUI();
 
             this.loadButton.IsEnabled = true;
+            this.includeDoneCheckBox.IsEnabled = true;
             this.loadButton.Content = "Reload";
         }
 
@@ -83,20 +74,25 @@ namespace JobLogger.Tickets
             this.ticketsStackPanel.Children.Clear();
             foreach (Ticket ticket in this.tickets)
             {
-                TicketControl ticketControl = new TicketControl(ticket);
-                ContextMenu contextMenu = new ContextMenu();
-                MenuItem menuItem = new MenuItem() { Header = "Remove" };
-                menuItem.Click += (s, e) =>
-                {
-                    this.tickets.Remove(ticket);
-                    this.ticketLoader.Save(this.tickets);
-                    this.ReloadUI();
-                };
-                contextMenu.Items.Add(menuItem);
-                ticketControl.ContextMenu = contextMenu;
-                this.ticketsStackPanel.Children.Add(ticketControl);
-                ticketControl.TicketChanged += t => this.ticketLoader.Save(this.tickets);
+                this.AddTicketToUI(ticket);
             }
+        }
+
+        private void AddTicketToUI(Ticket ticket)
+        {
+            TicketControl ticketControl = new TicketControl(ticket);
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem menuItem = new MenuItem() { Header = "Remove" };
+            menuItem.Click += (s, e) =>
+            {
+                this.tickets.Remove(ticket);
+                this.ticketLoader.Save(this.tickets, !this.includeDoneCheckBox.IsChecked.GetValueOrDefault());
+                this.ReloadUI();
+            };
+            contextMenu.Items.Add(menuItem);
+            ticketControl.ContextMenu = contextMenu;
+            this.ticketsStackPanel.Children.Add(ticketControl);
+            ticketControl.TicketChanged += t => this.ticketLoader.Save(this.tickets, !this.includeDoneCheckBox.IsChecked.GetValueOrDefault());
         }
 
         private void loadButton_Click(object sender, RoutedEventArgs e)
@@ -106,7 +102,7 @@ namespace JobLogger.Tickets
 
         private void ticketNumberTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Return)
+            if (e.Key == Key.Return)
             {
                 int ticketID;
                 if (int.TryParse(this.ticketNumberTextBox.Text, out ticketID) && this.queueSelectComboBox.SelectedItem != null)
@@ -114,14 +110,19 @@ namespace JobLogger.Tickets
                     if (!this.tickets.Any() || this.tickets.Any(ticket => ticket.TracTicket.ID != ticketID))
                     {
                         StateQueue queue = this.stateQueues[this.queueSelectComboBox.SelectedIndex];
-                        this.tickets.Add(this.ticketLoader.CreateNew(ticketID, queue));
-                        this.ticketLoader.Save(this.tickets);
+                        this.tickets.Add(this.ticketLoader.CreateNew(ticketID, queue.InitialState));
+                        this.ticketLoader.Save(this.tickets, !this.includeDoneCheckBox.IsChecked.GetValueOrDefault());
                         this.ReloadUI();
                     }
                 }
 
                 this.ticketNumberTextBox.Text = string.Empty;
             }
+        }
+
+        private void includeDoneCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            this.ReloadTickets();
         }
     }
 }

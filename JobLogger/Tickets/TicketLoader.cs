@@ -21,66 +21,49 @@ namespace JobLogger.Tickets
             this.filePath = filePath;
             if (!File.Exists(filePath))
             {
-                this.Save(new List<Ticket>());
+                this.Save(new List<Ticket>(), false);
             }
 
             this.tracComm = new TracComm(username, password);
             this.stateQueues = stateQueues;
         }
 
-        public Ticket CreateNew(int id, StateQueue stateQueue)
+        public Ticket CreateNew(int id, TicketState initialState)
         {
             IReadonlyTracTicket tracTicket = this.tracComm.LoadTicket(id);
-            return new Ticket(tracTicket, stateQueue.First(), new CustomTicketProperties(), stateQueue);
+            return new Ticket(tracTicket, initialState, new CustomTicketProperties());
         }
 
-        public void ReloadTracTicket(Ticket ticket)
-        {
-            ticket.TracTicket = this.tracComm.LoadTicket(ticket.TracTicket.ID);
-        }
-
-        public IEnumerable<Ticket> Load()
+        public IEnumerable<Ticket> Load(bool includeDone)
         {
             List<TicketSerializableData> serializableDataList = JsonConvert.DeserializeObject<List<TicketSerializableData>>(File.ReadAllText(this.filePath));
-            List<Ticket> tickets = new List<Ticket>();
-            foreach (TicketSerializableData data in serializableDataList)
+            foreach (TicketSerializableData data in serializableDataList.OrderBy(serializableTicketData => serializableTicketData.ID))
             {
-                IReadonlyTracTicket tracTicket = this.tracComm.LoadTicket(data.ID);
-                TicketState ticketState = null;
-                StateQueue stateQueue = null;
-                foreach (StateQueue queue in this.stateQueues)
+                TicketState ticketState = TicketStateRegistry.Instance.GetByCode(data.StatusCode);
+                if (ticketState != null && (ticketState != TicketStateRegistry.Instance.Get<DoneTicketState>() || includeDone))
                 {
-                    if (queue.Name.Equals(data.StateQueue, StringComparison.OrdinalIgnoreCase))
-                    {
-                        ticketState = queue.FindTicketState(data.StatusCode);
-                        if (ticketState != null)
-                        {
-                            stateQueue = queue;
-                            break;
-                        }
-                    }
-                }
-
-                if (ticketState != null && stateQueue != null)
-                {
-                    tickets.Add(new Ticket(tracTicket, ticketState, data.TicketProperties, stateQueue));
+                    IReadonlyTracTicket tracTicket = this.tracComm.LoadTicket(data.ID);
+                    yield return new Ticket(tracTicket, ticketState, data.TicketProperties);
                 }
             }
-
-            return tickets;
         }
 
-        public void Save(IEnumerable<Ticket> tickets)
+        public void Save(IEnumerable<Ticket> tickets, bool includeOldDone)
         {
+            string doneTicketCode = TicketStateRegistry.Instance.Get<DoneTicketState>().Code;
             List<TicketSerializableData> serializableDataList = new List<TicketSerializableData>();
+            if (includeOldDone)
+            {
+                serializableDataList.AddRange(JsonConvert.DeserializeObject<List<TicketSerializableData>>(File.ReadAllText(this.filePath)).Where(serializableTicket => serializableTicket.StatusCode == doneTicketCode));
+            }
+
             foreach (Ticket ticket in tickets)
             {
                 serializableDataList.Add(new TicketSerializableData()
                 {
                     ID = ticket.TracTicket.ID,
                     StatusCode = ticket.CurrentState.Code,
-                    StateQueue = ticket.StateQueue.Name,
-                    TicketProperties = ticket.TicketProperties
+                    TicketProperties = CustomTicketProperties.CloneFrom(ticket.TicketProperties)
                 });
             }
 

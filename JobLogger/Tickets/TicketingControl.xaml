@@ -5,15 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:JobLogger.Tickets"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="400">
     <Grid>
         <Button x:Name="loadButton" Content="Reload" Margin="0,-1,0,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="61" Click="loadButton_Click"/>
-        <ComboBox x:Name="queueSelectComboBox" HorizontalAlignment="Left" Margin="94,0,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="queueSelectComboBox" HorizontalAlignment="Left" Margin="94,0,0,0" VerticalAlignment="Top" Width="88"/>
         <TextBox x:Name="ticketNumberTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="89" KeyDown="ticketNumberTextBox_KeyDown"/>
         <ScrollViewer Margin="0,25,0,0">
             <StackPanel x:Name="ticketsStackPanel" Margin="0,0,5,0" />
         </ScrollViewer>
-        
+        <CheckBox x:Name="includeDoneCheckBox" Content="Include done" HorizontalAlignment="Left" Margin="187,4,0,0" VerticalAlignment="Top" Checked="includeDoneCheckBox_Checked"/>
+
 
     </Grid>
 </UserControl>

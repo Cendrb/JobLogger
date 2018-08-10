@@ -25,22 +25,24 @@ namespace JobLogger.Tickets.States
         {
             List<TicketStateValidationMessage> list = new List<TicketStateValidationMessage>();
 
+            list.Add(new TicketStateValidationMessage(
+                "You are done!",
+                "You can now hide this ticket from your dashboard",
+                TicketStateValidationMessageSeverity.ActionNeeded,
+                new TicketStateValidationMessageAction("Hide", innerTicket => innerTicket.MarkAsDone()),
+                new TicketStateValidationMessageAction("Reopen - back to estimating", innerTicket => innerTicket.ReopenToEstimating())));
+
             if (!ticket.TracTicket.SprintAssignment.Equals("estimated", StringComparison.Ordinal) || !ticket.TracTicket.SprintAssignment.Equals("ready-for-sprint-verified-by-programmer", StringComparison.Ordinal))
             {
-                list.Add(new TicketStateValidationMessage($"Should be in estimated or ready-for-sprint-verified-by-programmer (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimated or ready-for-sprint-verified-by-programmer", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage($"Should be in estimated or ready-for-sprint-verified-by-programmer (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimated or ready-for-sprint-verified-by-programmer", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
-            if (ticket.TracTicket.Remaining < 1)
+            if (ticket.TracTicket.Remaining != 0)
             {
-                list.Add(new TicketStateValidationMessage("Remaining smaller than 1", "You should set an estimate", TicketStateValidationMessageSeverity.Warning));
+                list.Add(new TicketStateValidationMessage("Remaining shouldn't be 0", "You should set an estimate", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
-        }
-
-        public override bool IsDone(Ticket ticket)
-        {
-            return !this.ValidateTicket(ticket).Any();
         }
     }
 }

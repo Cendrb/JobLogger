@@ -8,8 +8,8 @@ namespace JobLogger.Tickets
 {
     public enum TicketStateValidationMessageSeverity
     {
-        Info,
-        Warning,
-        Alert
+        Waiting,
+        ActionNeeded,
+        ImmediateActionRequired
     }
 }

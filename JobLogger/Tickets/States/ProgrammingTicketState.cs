@@ -7,9 +7,9 @@ using MetaTracInterface;
 
 namespace JobLogger.Tickets.States
 {
-    class AcceptedTicketState : TicketState
+    class ProgrammingTicketState : TicketState
     {
-        public AcceptedTicketState() : base("Accepted", "ACC")
+        public ProgrammingTicketState() : base("Accepted", "PROG")
         {
         }
 
@@ -33,22 +33,19 @@ namespace JobLogger.Tickets.States
                 CommonValidations.RemainingShouldBeGreaterThanZero,
                 CommonValidations.ShouldBeInSprint));
 
+            list.Add(new TicketStateValidationMessage(
+                "Programming",
+                "Come on, do it.",
+                TicketStateValidationMessageSeverity.ActionNeeded,
+                new TicketStateValidationMessageAction("Done", innerTicket => innerTicket.ProgrammingDone()),
+                new TicketStateValidationMessageAction("Incomplete specification", innerTicket => innerTicket.IncompleteSpecificationForProgramming())));
+
             if (ticket.TracTicket.Status != TicketStatus.Accepted)
             {
-                list.Add(new TicketStateValidationMessage($"Should be accepted (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.Warning));
-            }
-
-            if (string.IsNullOrWhiteSpace(ticket.TracTicket.FeatureBranch))
-            {
-                list.Add(new TicketStateValidationMessage("Missing feature branch", "You should get a feature branch", TicketStateValidationMessageSeverity.Info));
+                list.Add(new TicketStateValidationMessage($"Should be accepted (not {ticket.TracTicket.Status.ToString()})", "Incorrect status", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
             return list;
-        }
-
-        public override bool IsDone(Ticket ticket)
-        {
-            return false;
         }
     }
 }
