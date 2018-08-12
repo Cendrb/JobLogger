@@ -24,6 +24,7 @@ namespace JobLogger.Tickets.States
             this.registry.RegisterWithType(new MergedTicketState());
             this.registry.RegisterWithType(new TestingTicketState());
             this.registry.RegisterWithType(new WaitingForProgrammingSpecificationTicketState());
+            this.registry.RegisterWithType(new WaitingForEstimatingSpecificationTicketState());
             this.registry.RegisterWithType(new DoneTicketState());
         }
 
