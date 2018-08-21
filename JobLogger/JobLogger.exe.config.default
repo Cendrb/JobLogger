@@ -6,7 +6,11 @@
 
   <appSettings>
     <add key="MainFolder" value="c:\Users\cendr\Documents\joblog\"/>
-    <add key="TracUsername" value="c:\Users\cendr\Documents\joblog\"/>
-    <add key="TracPassword" value="c:\Users\cendr\Documents\joblog\"/>
+    <add key="TracUsername" value=""/>
+    <add key="TracPassword" value=""/>
+    <add key="ShowTeaTimer" value="true"/>
+    <add key="ShowTicketing" value="true"/>
+    <add key="ShowJobLogger" value="true"/>
+    <add key="InitialWindowWidth" value="900"/>
   </appSettings>
 </configuration>

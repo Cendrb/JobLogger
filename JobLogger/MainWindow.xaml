@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:JobLogger"
         xmlns:Tickets="clr-namespace:JobLogger.Tickets" x:Class="JobLogger.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="487.726" Width="900.227">
+        Title="Führer's toolset" Height="487.726" Width="900.227">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="350"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition x:Name="ticketingControlColumn" Width="1*"/>
+            <ColumnDefinition x:Name="jobLoggerColumn" Width="350"/>
+            <ColumnDefinition x:Name="teaTimerColumn" Width="150"/>
         </Grid.ColumnDefinitions>
         <Label x:Name="todayLabel" Content="Label" HorizontalAlignment="Left" Margin="5,11,0,0" VerticalAlignment="Top" MouseDown="TodayLabel_MouseDown" Grid.Column="1"/>
         <Label x:Name="totalTimeLabel" Content="Label" Margin="0,8,1,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="63" HorizontalContentAlignment="Center" FontSize="14" Grid.Column="1"/>

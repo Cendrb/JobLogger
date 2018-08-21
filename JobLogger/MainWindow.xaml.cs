@@ -31,6 +31,8 @@ namespace JobLogger
         {
             InitializeComponent();
 
+            this.Width = double.Parse(ConfigurationManager.AppSettings["InitialWindowWidth"]);
+
             this.currentDate = DateTime.Today;
 
             this.teaTimerGrid.Children.Add(new TeaTimer(new List<TimeSpan>()
@@ -77,6 +79,41 @@ namespace JobLogger
                     MessageBox.Show(e.Message, string.Format("Unable to parse {0}, invalid format", Path.GetFileName(currentPath)), MessageBoxButton.OK, MessageBoxImage.Error);
                     this.OpenInNotepad(currentPath);
                 }
+            }
+
+            this.UpdateUIVisibilities(
+                ConfigurationManager.AppSettings["ShowTicketing"].Equals("true", StringComparison.OrdinalIgnoreCase),
+                ConfigurationManager.AppSettings["ShowJobLogger"].Equals("true", StringComparison.OrdinalIgnoreCase),
+                ConfigurationManager.AppSettings["ShowTeaTimer"].Equals("true", StringComparison.OrdinalIgnoreCase));
+        }
+
+        private void UpdateUIVisibilities(bool showTicketing, bool showJobLogger, bool showTeaTimer)
+        {
+            if (showTicketing)
+            {
+                this.ticketingControlColumn.Width = new GridLength(1, GridUnitType.Star);
+            }
+            else
+            {
+                this.ticketingControlColumn.Width = new GridLength(0);
+            }
+
+            if (showJobLogger)
+            {
+                this.jobLoggerColumn.Width = new GridLength(350);
+            }
+            else
+            {
+                this.jobLoggerColumn.Width = new GridLength(0);
+            }
+
+            if (showTeaTimer)
+            {
+                this.teaTimerColumn.Width = new GridLength(150);
+            }
+            else
+            {
+                this.teaTimerColumn.Width = new GridLength(0);
             }
         }
 
