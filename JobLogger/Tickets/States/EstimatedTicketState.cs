@@ -38,7 +38,7 @@ namespace JobLogger.Tickets.States
                 list.Add(new TicketStateValidationMessage($"Should be in estimated or ready-for-sprint-verified-by-programmer (not {ticket.TracTicket.SprintAssignment})", "Ticket should be in the estimated or ready-for-sprint-verified-by-programmer", TicketStateValidationMessageSeverity.ActionNeeded));
             }
 
-            if (ticket.TracTicket.Remaining != 0)
+            if (ticket.TracTicket.Remaining == 0)
             {
                 list.Add(new TicketStateValidationMessage("Remaining shouldn't be 0", "You should set an estimate", TicketStateValidationMessageSeverity.ActionNeeded));
             }

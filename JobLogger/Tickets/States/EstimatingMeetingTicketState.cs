@@ -45,7 +45,7 @@ namespace JobLogger.Tickets.States
                     new TicketStateValidationMessageAction("Re-estimate", innerTicket => innerTicket.ReopenToEstimating())));
             }
 
-            if (ticket.TracTicket.Remaining != 0)
+            if (ticket.TracTicket.Remaining == 0)
             {
                 list.Add(new TicketStateValidationMessage("Remaining shouldn't be 0", "You should set an estimate", TicketStateValidationMessageSeverity.ActionNeeded));
             }
