@@ -5,12 +5,28 @@
     </startup>
 
   <appSettings>
-    <add key="MainFolder" value="c:\Users\cendr\Documents\joblog\"/>
-    <add key="TracUsername" value=""/>
-    <add key="TracPassword" value=""/>
-    <add key="ShowTeaTimer" value="true"/>
-    <add key="ShowTicketing" value="true"/>
-    <add key="ShowJobLogger" value="true"/>
-    <add key="InitialWindowWidth" value="900"/>
+    <!-- Path to save the ticket data to - any empty folder will do (recommend to sync on onedrive) -->
+    <add key="MainFolder" value="c:\temp" />
+    
+    <!-- YOUR TRAC USERNAME -->
+    <add key="TracUsername" value="" />
+    
+    <!-- YOUR TRAC PASSWORD -->
+    <add key="TracPassword" value="" />
+    
+    <!-- You want some tea? -->
+    <add key="ShowTeaTimer" value="false" />
+    
+    <!-- The main screen with your tickets -->
+    <add key="ShowTicketing" value="true" />
+    
+    <!-- A somehow useless way to log your time, do not use unless you really want to -->
+    <add key="ShowJobLogger" value="false" />
+    
+    <!-- Width of the main window on application start -->
+    <add key="InitialWindowWidth" value="900" />
+    
+    <!-- Abbreviation used in status updates (can be changed from UI too) -->
+    <add key="AuthorAbbreviation" value="CD" />
   </appSettings>
 </configuration>
