@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:JobLogger"
         xmlns:Tickets="clr-namespace:JobLogger.Tickets" x:Class="JobLogger.MainWindow"
         mc:Ignorable="d"
-        Title="Führer's toolset" Height="487.726" Width="900.227">
+        Title="THIS - Trac Hummus Integration Software" Height="487.726" Width="900.227">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ticketingControlColumn" Width="1*"/>
