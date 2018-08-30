@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MetaTracInterface;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace JobLogger.Tickets
     partial class TicketControl : UserControl
     {
         public event Action<Ticket> TicketChanged;
+        public event Action<IReadOnlyTracTicketData> TracTicketChanged;
 
         private Ticket ticket;
 
@@ -122,6 +124,16 @@ namespace JobLogger.Tickets
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 Process.Start("http://10.71.23.133:8088/Malo/ticket/" + this.ticket.TracTicket.ID);
+            }
+        }
+
+        private void newStatusNoteButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddNewStatusUpdateDialog addNewStatusUpdateDialog = new AddNewStatusUpdateDialog(this.ticket);
+            addNewStatusUpdateDialog.ShowDialog();
+            if (addNewStatusUpdateDialog.Saved)
+            {
+                TracTicketChanged(this.ticket.TracTicket);
             }
         }
     }

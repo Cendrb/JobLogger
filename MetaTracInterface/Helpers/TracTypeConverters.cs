@@ -185,7 +185,7 @@ namespace MetaTracInterface.Helpers
                         stringBuilder.Append(ticketStatusUpdate.Text);
                     }
 
-                    stringBuilder.Append("[[BR]]");
+                    stringBuilder.Append("[[BR]]\n");
                 }
 
                 return stringBuilder.ToString();

@@ -25,12 +25,13 @@ namespace JobLogger.Tickets
             }
 
             this.tracComm = new TracComm(username, password);
+
             this.stateQueues = stateQueues;
         }
 
         public Ticket CreateNew(int id, TicketState initialState)
         {
-            IReadonlyTracTicket tracTicket = this.tracComm.LoadTicket(id);
+            TracTicketData tracTicket = this.tracComm.LoadTicket(id);
             return new Ticket(tracTicket, initialState, new CustomTicketProperties());
         }
 
@@ -42,8 +43,9 @@ namespace JobLogger.Tickets
                 TicketState ticketState = TicketStateRegistry.Instance.GetByCode(data.StatusCode);
                 if (ticketState != null && (ticketState != TicketStateRegistry.Instance.Get<DoneTicketState>() || includeDone))
                 {
-                    IReadonlyTracTicket tracTicket = this.tracComm.LoadTicket(data.ID);
-                    yield return new Ticket(tracTicket, ticketState, data.TicketProperties);
+                    TracTicketData tracTicket = this.tracComm.LoadTicket(data.ID);
+                    Ticket ticket = new Ticket(tracTicket, ticketState, data.TicketProperties);
+                    yield return ticket;
                 }
             }
         }
@@ -68,6 +70,11 @@ namespace JobLogger.Tickets
             }
 
             File.WriteAllText(this.filePath, JsonConvert.SerializeObject(serializableDataList, Newtonsoft.Json.Formatting.Indented));
+        }
+
+        public void SaveTracTicket(IReadOnlyTracTicketData tracTicket)
+        {
+            this.tracComm.UpdateTicket(tracTicket);
         }
     }
 }

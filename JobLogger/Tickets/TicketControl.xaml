@@ -20,12 +20,15 @@
 
         <StackPanel Margin="0,18,0,8">
             <StackPanel x:Name="warningsStackPanel" VerticalAlignment="Top"/>
-            <Expander Header="More">
-                <StackPanel>
-                    <StackPanel x:Name="propertiesStackPanel" VerticalAlignment="Top"/>
-                    <TextBox x:Name="statusUpdatesTextBox" Background="Transparent" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap"/>
-                </StackPanel>
-            </Expander>
+            <Grid>
+                <Button x:Name="newStatusNoteButton" Content="SN" Width="30" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,5,0" ToolTip="Add new status note" Click="newStatusNoteButton_Click" Panel.ZIndex="1"/>
+                <Expander Header="More" IsExpanded="False">
+                    <StackPanel>
+                        <StackPanel x:Name="propertiesStackPanel" VerticalAlignment="Top"/>
+                        <TextBox x:Name="statusUpdatesTextBox" Background="Transparent" BorderThickness="0" IsReadOnly="True" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Expander>
+            </Grid>
         </StackPanel>
         <Label x:Name="currentStateLabel" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="14" HorizontalContentAlignment="Right"/>
     </Grid>

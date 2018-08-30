@@ -29,5 +29,17 @@ namespace MetaTracInterface.Helpers
                 }
             }
         }
+
+        public static string GetXMLRPCString(this object value)
+        {
+            if (value == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return value.ToString();
+            }
+        }
     }
 }

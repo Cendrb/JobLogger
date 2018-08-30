@@ -93,6 +93,7 @@ namespace JobLogger.Tickets
             ticketControl.ContextMenu = contextMenu;
             this.ticketsStackPanel.Children.Add(ticketControl);
             ticketControl.TicketChanged += t => this.ticketLoader.Save(this.tickets, !this.includeDoneCheckBox.IsChecked.GetValueOrDefault());
+            ticketControl.TracTicketChanged += tracTicket => this.ticketLoader.SaveTracTicket(tracTicket);
         }
 
         private void loadButton_Click(object sender, RoutedEventArgs e)

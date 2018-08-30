@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MetaTracInterface
 {
-    public interface IReadonlyTracTicket
+    public interface IReadOnlyTracTicketData
     {
         int ID { get; }
         DateTime Created { get; }

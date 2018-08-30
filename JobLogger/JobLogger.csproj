@@ -81,6 +81,9 @@
     <Compile Include="TeaTimer.xaml.cs">
       <DependentUpon>TeaTimer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tickets\AddNewStatusUpdateDialog.xaml.cs">
+      <DependentUpon>AddNewStatusUpdateDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tickets\CustomTicketProperties.cs" />
     <Compile Include="Tickets\IReadOnlyCustomTicketProperties.cs" />
     <Compile Include="Tickets\StateQueue.cs" />
@@ -126,6 +129,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="TeaTimer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tickets\AddNewStatusUpdateDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

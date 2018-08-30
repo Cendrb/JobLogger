@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MetaTracInterface
 {
-    public class TracTicket : IReadonlyTracTicket
+    public class TracTicketData : IReadOnlyTracTicketData
     {
         public int ID { get; set; }
         public DateTime Created { get; set; }
@@ -37,7 +37,7 @@ namespace MetaTracInterface
         public string QaBY { get; set; }
         public List<TicketAttachment> Attachments { get; set; }
         public List<TicketTestPlanAttachment> TestPlans { get; set; }
-        IEnumerable<TicketAttachment> IReadonlyTracTicket.Attachments { get { return this.Attachments; } }
-        IEnumerable<TicketTestPlanAttachment> IReadonlyTracTicket.TestPlans { get { return this.TestPlans; } }
+        IEnumerable<TicketAttachment> IReadOnlyTracTicketData.Attachments { get { return this.Attachments; } }
+        IEnumerable<TicketTestPlanAttachment> IReadOnlyTracTicketData.TestPlans { get { return this.TestPlans; } }
     }
 }

@@ -25,42 +25,48 @@ namespace MetaTracInterface
             this.ticketClient.Credentials = new NetworkCredential(this.username, this.password);
         }
 
-        public TracTicket LoadTicket(int id)
+        public TracTicketData LoadTicket(int id)
         {
             object[] ticketData = this.ticketClient.GetTicket(id);
             object[] attachmentsData = this.ticketClient.GetAttachments(id);
-            TracTicket ticket = ParseTracTicket(ticketData);
+            TracTicketData ticket = ParseTracTicket(ticketData);
             List<TicketAttachment> attachments = ParseAttachments(attachmentsData);
             ticket.Attachments = attachments;
             ticket.TestPlans = attachments.Where(attachment => attachment is TicketTestPlanAttachment).Cast<TicketTestPlanAttachment>().ToList();
             return ticket;
         }
 
-        public TracTicket UpdateStatusUpdates(int ticketID, List<TicketStatusUpdate> ticketStatusUpdates)
+        public TracTicketData UpdateTicket(IReadOnlyTracTicketData tracTicketData)
         {
-            string status = TracTypeConverters.TicketStatusUpdatesConverter.ConvertToSource(ticketStatusUpdates);
             object[] ticketData = this.ticketClient.UpdateTicket(
-                ticketID,
+                tracTicketData.ID,
                 string.Empty,
                 new
                 {
                     action = "leave",
-                    statusupdatetext = status
-                });
-
-            return ParseTracTicket(ticketData);
-        }
-
-        public TracTicket UpdateFeatureBranch(TracTicket tracTicket, string featureBranch)
-        {
-            object[] ticketData = this.ticketClient.UpdateTicket(
-                tracTicket.ID,
-                "Feature branch updated",
-                new
-                {
-                    action = "leave",
-                    feature_branch = featureBranch,
-                    summary = "Miscreated ticket"
+                    businessvalue = tracTicketData.BusinessValue.GetXMLRPCString(),
+                    component = tracTicketData.Component.GetXMLRPCString(),
+                    configsettings = tracTicketData.ConfigurationSettings.GetXMLRPCString(),
+                    description = tracTicketData.Description.GetXMLRPCString(),
+                    feature_branch = tracTicketData.FeatureBranch.GetXMLRPCString(),
+                    howtoqa = tracTicketData.HowToQA.GetXMLRPCString(),
+                    setupnotes = tracTicketData.InstallationNotes.GetXMLRPCString(),
+                    milestone = tracTicketData.Milestone.GetXMLRPCString(),
+                    owner = tracTicketData.Owner.GetXMLRPCString(),
+                    parents = tracTicketData.ParentTicketID.GetXMLRPCString(),
+                    priority = TracTypeConverters.TicketPriorityConverter.ConvertToSource(tracTicketData.Priority),
+                    qaby = tracTicketData.QaBY.GetXMLRPCString(),
+                    estimatedhours = tracTicketData.Remaining.GetXMLRPCString(),
+                    reporter = tracTicketData.Reporter.GetXMLRPCString(),
+                    sprintassignment = tracTicketData.SprintAssignment.GetXMLRPCString(),
+                    sprintteam = tracTicketData.SprintTeam.GetXMLRPCString(),
+                    status = TracTypeConverters.TicketStatusConverter.ConvertToSource(tracTicketData.Status),
+                    statusupdatetext = TracTypeConverters.TicketStatusUpdatesConverter.ConvertToSource(tracTicketData.StatusUpdates),
+                    summary = tracTicketData.Summary.GetXMLRPCString(),
+                    targetversion = tracTicketData.TargetVersion.GetXMLRPCString(),
+                    technotes = tracTicketData.TechnicalNotes.GetXMLRPCString(),
+                    testplanreviewedprog = TracTypeConverters.BooleanTracConverter.ConvertToSource(tracTicketData.TestPlanReviewed),
+                    totalhours = tracTicketData.TotalHours.GetXMLRPCString()
                 });
 
             return ParseTracTicket(ticketData);
@@ -69,7 +75,7 @@ namespace MetaTracInterface
         private static List<TicketAttachment> ParseAttachments(object[] attachmentsData)
         {
             List<TicketAttachment> attachments = new List<TicketAttachment>();
-            foreach(object[] attachment in attachmentsData)
+            foreach (object[] attachment in attachmentsData)
             {
                 TicketAttachment ticketAttachment = new TicketAttachment()
                 {
@@ -81,7 +87,7 @@ namespace MetaTracInterface
                 };
 
                 TicketTestPlanAttachment testPlan = TicketTestPlanAttachment.TryParse(ticketAttachment);
-                if(testPlan != null)
+                if (testPlan != null)
                 {
                     attachments.Add(testPlan);
                 }
@@ -94,13 +100,13 @@ namespace MetaTracInterface
             return attachments;
         }
 
-        private static TracTicket ParseTracTicket(object[] ticketData)
+        private static TracTicketData ParseTracTicket(object[] ticketData)
         {
             int ticketID = (int)ticketData[0];
             DateTime created = (DateTime)ticketData[1];
             DateTime updated = (DateTime)ticketData[2];
             XmlRpcStruct attributes = (XmlRpcStruct)ticketData[3];
-            return new TracTicket()
+            return new TracTicketData()
             {
                 BusinessValue = attributes.GetValue<decimal?>("businessvalue"),
                 Changed = updated,
