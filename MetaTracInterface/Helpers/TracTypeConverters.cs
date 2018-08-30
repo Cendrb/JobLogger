@@ -174,6 +174,7 @@ namespace MetaTracInterface.Helpers
             target =>
             {
                 StringBuilder stringBuilder = new StringBuilder();
+                int index = 0;
                 foreach (TicketStatusUpdate ticketStatusUpdate in target)
                 {
                     if (ticketStatusUpdate.DateTime.HasValue && ticketStatusUpdate.AuthorAbbreviation != null)
@@ -185,7 +186,12 @@ namespace MetaTracInterface.Helpers
                         stringBuilder.Append(ticketStatusUpdate.Text);
                     }
 
-                    stringBuilder.Append("[[BR]]\n");
+                    if (index != target.Count - 1)
+                    {
+                        stringBuilder.Append("[[BR]]\n");
+                    }
+
+                    index++;
                 }
 
                 return stringBuilder.ToString();
