@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JobLogger.Tickets"
         mc:Ignorable="d"
-        Title="AddNewStatusUpdateDialog" Height="167.522" Width="518.714" SizeToContent="Height" KeyDown="Window_KeyDown" ResizeMode="CanMinimize">
+        Title="AddNewStatusUpdateDialog" Height="167.522" Width="518.714" SizeToContent="Height" KeyDown="Window_KeyDown" ResizeMode="CanMinimize"
+        FocusManager.FocusedElement="{x:Reference newStatusUpdateTextBox}">
     <StackPanel>
         <Grid>
             <Label Content="Text" VerticalAlignment="Top" Margin="10,10,0,0" HorizontalAlignment="Left"/>
