@@ -119,7 +119,10 @@ namespace JobLogger.Tickets
 
         private void primaryTitleLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Process.Start("http://10.71.23.133:8088/Malo/ticket/" + this.ticket.TracTicket.ID);
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Process.Start("http://10.71.23.133:8088/Malo/ticket/" + this.ticket.TracTicket.ID);
+            }
         }
     }
 }
