@@ -32,6 +32,7 @@ namespace JobLogger.Tickets
             InitializeComponent();
 
             this.TicketChanged += innerTicket => this.ReloadUI();
+            this.TracTicketChanged += tracTicket => this.ReloadUI();
 
             this.ticket = ticket;
 
