@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace MetaTracInterface.Helpers
             Type underlyingType = Nullable.GetUnderlyingType(type);
             if (underlyingType == null)
             {
-                return (T)Convert.ChangeType(xmlRpcStruct[key], typeof(T));
+                return (T)Convert.ChangeType(xmlRpcStruct[key], typeof(T), CultureInfo.InvariantCulture);
             }
             else
             {
@@ -25,7 +26,7 @@ namespace MetaTracInterface.Helpers
                 }
                 else
                 {
-                    return (T)Convert.ChangeType(xmlRpcStruct[key], underlyingType);
+                    return (T)Convert.ChangeType(xmlRpcStruct[key], underlyingType, CultureInfo.InvariantCulture);
                 }
             }
         }
@@ -38,7 +39,16 @@ namespace MetaTracInterface.Helpers
             }
             else
             {
-                return value.ToString();
+                if (value is IFormattable)
+                {
+                    return ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return value.ToString();
+                }
+
+                
             }
         }
     }
