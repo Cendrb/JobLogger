@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JobLogger.Properties;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace JobLogger.Tickets
 
             this.Title = $"Add status update for {ticket.TracTicket.ID}";
             this.statusUpdatesTextBlock.Text = ticket.GetStatusUpdatesString();
-            this.newStatusUpdateAuthorTextBox.Text = ConfigurationManager.AppSettings["AuthorAbbreviation"];
+            this.newStatusUpdateAuthorTextBox.Text = Settings.Default.AuthorAbbreviation;
             this.newStatusUpdateDateDatePicker.SelectedDate = DateTime.Today;
         }
 
@@ -51,19 +52,8 @@ namespace JobLogger.Tickets
             }
             else
             {
-                Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                if (config.AppSettings.Settings.AllKeys.Contains("AuthorAbbreviation"))
-                {
-                    config.AppSettings.Settings["AuthorAbbreviation"].Value = this.newStatusUpdateAuthorTextBox.Text;
-                }
-                else
-                {
-                    config.AppSettings.Settings.Add("AuthorAbbreviation", this.newStatusUpdateAuthorTextBox.Text);
-                }
-
-                config.Save();
-
-                ConfigurationManager.RefreshSection("appSettings");
+                Settings.Default.AuthorAbbreviation = this.newStatusUpdateAuthorTextBox.Text;
+                Settings.Default.Save();
                 this.Ticket.AddStatusUpdate(this.newStatusUpdateAuthorTextBox.Text, this.newStatusUpdateDateDatePicker.SelectedDate.Value, this.newStatusUpdateTextBox.Text);
                 this.Saved = true;
                 this.Close();

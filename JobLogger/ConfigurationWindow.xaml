@@ -1,0 +1,32 @@
+﻿<Window x:Class="JobLogger.ConfigurationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JobLogger"
+        mc:Ignorable="d"
+        Title="Configuration" Height="450" Width="586.18" SizeToContent="Height">
+    <StackPanel Margin="0,0,0,10">
+        <StackPanel Orientation="Vertical" Margin="10,10,10,0">
+            <Label Content="Trac Username"/>
+            <TextBox x:Name="tracUsernameTextBox" Height="23" TextWrapping="Wrap"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="10,10,10,0">
+            <Label Content="Trac Password"/>
+            <TextBox x:Name="tracPasswordTextBox" Height="23" TextWrapping="Wrap"/>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="10,10,10,0">
+            <Label Content="Main Folder - an empty folder to save data to, recommended to put on cloud storage like OneDrive"/>
+            <Grid>
+                <TextBox x:Name="mainFolderTextBox" Height="23" TextWrapping="Wrap" Margin="0,0,102,0"/>
+                <Button x:Name="mainFolderBrowseButton" Content="Browse..." HorizontalAlignment="Right" Width="97" Click="MainFolderBrowseButton_Click"/>
+            </Grid>
+                
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="10,10,10,0">
+            <Label Content="Trac Author Abbreviation - put into parentheses into status updates to identify the author"/>
+            <TextBox x:Name="tracAuthorAbbreviationTextBox" Height="23" TextWrapping="Wrap"/>
+        </StackPanel>
+        <Button Content="Save" Margin="10,10,10,0" Click="SaveButton_Click"/>
+    </StackPanel>
+</Window>

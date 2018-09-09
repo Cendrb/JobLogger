@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using CookComputing.XmlRpc;
+using JobLogger.Properties;
 using JobLogger.Tickets;
 using MetaTracInterface;
 
@@ -42,7 +43,27 @@ namespace JobLogger
                 this.Title = "THIS - Trac Hummus Integration Software (development version)";
             }
 
-            this.Width = double.Parse(ConfigurationManager.AppSettings["InitialWindowWidth"]);
+            if (Settings.Default.WindowSize.Height != 0)
+            {
+                this.Height = Settings.Default.WindowSize.Height;
+            }
+
+            if (Settings.Default.WindowSize.Width != 0)
+            {
+                this.Width = Settings.Default.WindowSize.Width;
+            }
+
+            if (string.IsNullOrEmpty(Settings.Default.TracPassword)
+                || string.IsNullOrEmpty(Settings.Default.TracUsername)
+                || string.IsNullOrEmpty(Settings.Default.MainFolder))
+            {
+                ConfigurationWindow configurationWindow = new ConfigurationWindow();
+                configurationWindow.ShowDialog();
+                if (!configurationWindow.ConfigurationSaved)
+                {
+                    Environment.Exit(0);
+                }
+            }
 
             this.currentDate = DateTime.Today;
 
@@ -58,13 +79,14 @@ namespace JobLogger
             }));
 
             TracComm tracComm = new TracComm(
-                ConfigurationManager.AppSettings["TracUsername"],
-                ConfigurationManager.AppSettings["TracPassword"]);
+                Settings.Default.TracUsername,
+                Settings.Default.TracPassword);
 
-            TicketLoader ticketLoader = new TicketLoader(Path.Combine(ConfigurationManager.AppSettings["MainFolder"], "tickets.txt"));
+            Directory.CreateDirectory(Settings.Default.MainFolder);
+            TicketLoader ticketLoader = new TicketLoader(Path.Combine(Settings.Default.MainFolder, "tickets.txt"));
 
             TicketingControl ticketingControl = new TicketingControl(ticketLoader, tracComm);
-            ticketingControl.Margin = new Thickness(10, 13, 0, 10);
+            ticketingControl.Margin = new Thickness(10, 23, 0, 10);
 
             this.mainGrid.Children.Add(ticketingControl);
 
@@ -76,7 +98,11 @@ namespace JobLogger
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Clipboard.SetText(e.ExceptionObject.ToString());
-            MessageBox.Show("Exception copied to cliboard\n\n" + e.ExceptionObject.ToString(), "Unbehandelte Ausnahme, bericht an den Führer!");
+            if (MessageBox.Show("Do you want to edit the configuration?\n\nException copied to cliboard\n\n" + e.ExceptionObject.ToString(), "Unhandled exception", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+            {
+                ConfigurationWindow configurationWindow = new ConfigurationWindow();
+                configurationWindow.ShowDialog();
+            }
         }
 
         private void ReloadUI()
@@ -112,9 +138,9 @@ namespace JobLogger
             }
 
             this.UpdateUIVisibilities(
-                ConfigurationManager.AppSettings["ShowTicketing"].Equals("true", StringComparison.OrdinalIgnoreCase),
-                ConfigurationManager.AppSettings["ShowJobLogger"].Equals("true", StringComparison.OrdinalIgnoreCase),
-                ConfigurationManager.AppSettings["ShowTeaTimer"].Equals("true", StringComparison.OrdinalIgnoreCase));
+                Settings.Default.ShowTicketing,
+                false,
+                Settings.Default.ShowTeaTimer);
         }
 
         private void UpdateUIVisibilities(bool showTicketing, bool showJobLogger, bool showTeaTimer)
@@ -151,7 +177,7 @@ namespace JobLogger
         {
             string todayFileName = date.ToString("dd. MM. yyyy") + ".txt";
 
-            DirectoryInfo saveLocation = new DirectoryInfo(ConfigurationManager.AppSettings["MainFolder"]);
+            DirectoryInfo saveLocation = new DirectoryInfo(Settings.Default.MainFolder);
             return Path.Combine(saveLocation.ToString(), todayFileName);
         }
 
@@ -174,6 +200,23 @@ namespace JobLogger
         {
             this.currentDate = (DateTime)e.AddedItems[0];
             this.ReloadUI();
+        }
+
+        private void ConfigurationMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ConfigurationWindow configurationWindow = new ConfigurationWindow();
+            configurationWindow.ShowDialog();
+            if (configurationWindow.ConfigurationSaved)
+            {
+                System.Windows.Forms.Application.Restart();
+                Application.Current.Shutdown();
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Settings.Default.WindowSize = new System.Drawing.Size((int)this.Width, (int)this.Height);
+            Settings.Default.Save();
         }
     }
 }
