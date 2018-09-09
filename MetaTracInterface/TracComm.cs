@@ -25,51 +25,50 @@ namespace MetaTracInterface
             this.ticketClient.Credentials = new NetworkCredential(this.username, this.password);
         }
 
-        public TracTicketData LoadTicket(int id)
+        public void LoadTicketData(TracTicket tracTicket)
         {
-            object[] ticketData = this.ticketClient.GetTicket(id);
-            object[] attachmentsData = this.ticketClient.GetAttachments(id);
-            TracTicketData ticket = ParseTracTicket(ticketData);
+            object[] ticketData = this.ticketClient.GetTicket(tracTicket.ID);
+            object[] attachmentsData = this.ticketClient.GetAttachments(tracTicket.ID);
+            ParseTracTicket(tracTicket, ticketData);
             List<TicketAttachment> attachments = ParseAttachments(attachmentsData);
-            ticket.Attachments = attachments;
-            ticket.TestPlans = attachments.Where(attachment => attachment is TicketTestPlanAttachment).Cast<TicketTestPlanAttachment>().ToList();
-            return ticket;
+            tracTicket.Attachments = attachments;
+            tracTicket.TestPlans = attachments.Where(attachment => attachment is TicketTestPlanAttachment).Cast<TicketTestPlanAttachment>().ToList();
         }
 
-        public TracTicketData UpdateTicket(IReadOnlyTracTicketData tracTicketData)
+        public void UpdateTicket(TracTicket tracTicket)
         {
             object[] ticketData = this.ticketClient.UpdateTicket(
-                tracTicketData.ID,
+                tracTicket.ID,
                 string.Empty,
                 new
                 {
                     action = "leave",
-                    businessvalue = tracTicketData.BusinessValue.GetXMLRPCString(),
-                    component = tracTicketData.Component.GetXMLRPCString(),
-                    configsettings = tracTicketData.ConfigurationSettings.GetXMLRPCString(),
-                    description = tracTicketData.Description.GetXMLRPCString(),
-                    feature_branch = tracTicketData.FeatureBranch.GetXMLRPCString(),
-                    howtoqa = tracTicketData.HowToQA.GetXMLRPCString(),
-                    setupnotes = tracTicketData.InstallationNotes.GetXMLRPCString(),
-                    milestone = tracTicketData.Milestone.GetXMLRPCString(),
-                    owner = tracTicketData.Owner.GetXMLRPCString(),
-                    parents = tracTicketData.ParentTicketID.GetXMLRPCString(),
-                    priority = TracTypeConverters.TicketPriorityConverter.ConvertToSource(tracTicketData.Priority),
-                    qaby = tracTicketData.QaBY.GetXMLRPCString(),
-                    estimatedhours = tracTicketData.Remaining.GetXMLRPCString(),
-                    reporter = tracTicketData.Reporter.GetXMLRPCString(),
-                    sprintassignment = tracTicketData.SprintAssignment.GetXMLRPCString(),
-                    sprintteam = tracTicketData.SprintTeam.GetXMLRPCString(),
-                    status = TracTypeConverters.TicketStatusConverter.ConvertToSource(tracTicketData.Status),
-                    statusupdatetext = TracTypeConverters.TicketStatusUpdatesConverter.ConvertToSource(tracTicketData.StatusUpdates),
-                    summary = tracTicketData.Summary.GetXMLRPCString(),
-                    targetversion = tracTicketData.TargetVersion.GetXMLRPCString(),
-                    technotes = tracTicketData.TechnicalNotes.GetXMLRPCString(),
-                    testplanreviewedprog = TracTypeConverters.BooleanTracConverter.ConvertToSource(tracTicketData.TestPlanReviewed),
-                    totalhours = tracTicketData.TotalHours.GetXMLRPCString()
+                    businessvalue = tracTicket.BusinessValue.GetXMLRPCString(),
+                    component = tracTicket.Component.GetXMLRPCString(),
+                    configsettings = tracTicket.ConfigurationSettings.GetXMLRPCString(),
+                    description = tracTicket.Description.GetXMLRPCString(),
+                    feature_branch = tracTicket.FeatureBranch.GetXMLRPCString(),
+                    howtoqa = tracTicket.HowToQA.GetXMLRPCString(),
+                    setupnotes = tracTicket.InstallationNotes.GetXMLRPCString(),
+                    milestone = tracTicket.Milestone.GetXMLRPCString(),
+                    owner = tracTicket.Owner.GetXMLRPCString(),
+                    parents = tracTicket.ParentTicketID.GetXMLRPCString(),
+                    priority = TracTypeConverters.TicketPriorityConverter.ConvertToSource(tracTicket.Priority),
+                    qaby = tracTicket.QaBY.GetXMLRPCString(),
+                    estimatedhours = tracTicket.Remaining.GetXMLRPCString(),
+                    reporter = tracTicket.Reporter.GetXMLRPCString(),
+                    sprintassignment = tracTicket.SprintAssignment.GetXMLRPCString(),
+                    sprintteam = tracTicket.SprintTeam.GetXMLRPCString(),
+                    status = TracTypeConverters.TicketStatusConverter.ConvertToSource(tracTicket.Status),
+                    statusupdatetext = TracTypeConverters.TicketStatusUpdatesConverter.ConvertToSource(tracTicket.StatusUpdates),
+                    summary = tracTicket.Summary.GetXMLRPCString(),
+                    targetversion = tracTicket.TargetVersion.GetXMLRPCString(),
+                    technotes = tracTicket.TechnicalNotes.GetXMLRPCString(),
+                    testplanreviewedprog = TracTypeConverters.BooleanTracConverter.ConvertToSource(tracTicket.TestPlanReviewed),
+                    totalhours = tracTicket.TotalHours.GetXMLRPCString()
                 });
 
-            return ParseTracTicket(ticketData);
+            ParseTracTicket(tracTicket, ticketData);
         }
 
         private static List<TicketAttachment> ParseAttachments(object[] attachmentsData)
@@ -100,42 +99,38 @@ namespace MetaTracInterface
             return attachments;
         }
 
-        private static TracTicketData ParseTracTicket(object[] ticketData)
+        private static void ParseTracTicket(TracTicket targetTicket, object[] ticketData)
         {
             int ticketID = (int)ticketData[0];
             DateTime created = (DateTime)ticketData[1];
             DateTime updated = (DateTime)ticketData[2];
             XmlRpcStruct attributes = (XmlRpcStruct)ticketData[3];
-            return new TracTicketData()
-            {
-                BusinessValue = attributes.GetValue<decimal?>("businessvalue"),
-                Changed = updated,
-                ChangeTime = attributes.GetValue<DateTime>("changetime").ToLocalTime(),
-                Component = attributes.GetValue<string>("component"),
-                ConfigurationSettings = attributes.GetValue<string>("configsettings"),
-                Created = created,
-                Description = attributes.GetValue<string>("description"),
-                FeatureBranch = attributes.GetValue<string>("feature_branch"),
-                HowToQA = attributes.GetValue<string>("howtoqa"),
-                ID = ticketID,
-                InstallationNotes = attributes.GetValue<string>("setupnotes"),
-                Milestone = attributes.GetValue<string>("milestone"),
-                Owner = attributes.GetValue<string>("owner"),
-                ParentTicketID = attributes.GetValue<int?>("parents"),
-                Priority = TracTypeConverters.TicketPriorityConverter.ConvertToTarget(attributes.GetValue<string>("priority")),
-                QaBY = attributes.GetValue<string>("qaby"),
-                Remaining = attributes.GetValue<decimal>("estimatedhours"),
-                Reporter = attributes.GetValue<string>("reporter"),
-                SprintAssignment = attributes.GetValue<string>("sprintassignment"),
-                SprintTeam = attributes.GetValue<string>("sprintteam"),
-                Status = TracTypeConverters.TicketStatusConverter.ConvertToTarget(attributes.GetValue<string>("status")),
-                StatusUpdates = TracTypeConverters.TicketStatusUpdatesConverter.ConvertToTarget(attributes.GetValue<string>("statusupdatetext")),
-                Summary = attributes.GetValue<string>("summary"),
-                TargetVersion = attributes.GetValue<string>("targetversion"),
-                TechnicalNotes = attributes.GetValue<string>("technotes"),
-                TestPlanReviewed = TracTypeConverters.BooleanTracConverter.ConvertToTarget(attributes.GetValue<string>("testplanreviewedprog")),
-                TotalHours = attributes.GetValue<decimal>("totalhours")
-            };
+            targetTicket.BusinessValue = attributes.GetValue<decimal?>("businessvalue");
+            targetTicket.Changed = updated;
+            targetTicket.ChangeTime = attributes.GetValue<DateTime>("changetime").ToLocalTime();
+            targetTicket.Component = attributes.GetValue<string>("component");
+            targetTicket.ConfigurationSettings = attributes.GetValue<string>("configsettings");
+            targetTicket.Created = created;
+            targetTicket.Description = attributes.GetValue<string>("description");
+            targetTicket.FeatureBranch = attributes.GetValue<string>("feature_branch");
+            targetTicket.HowToQA = attributes.GetValue<string>("howtoqa");
+            targetTicket.InstallationNotes = attributes.GetValue<string>("setupnotes");
+            targetTicket.Milestone = attributes.GetValue<string>("milestone");
+            targetTicket.Owner = attributes.GetValue<string>("owner");
+            targetTicket.ParentTicketID = attributes.GetValue<int?>("parents");
+            targetTicket.Priority = TracTypeConverters.TicketPriorityConverter.ConvertToTarget(attributes.GetValue<string>("priority"));
+            targetTicket.QaBY = attributes.GetValue<string>("qaby");
+            targetTicket.Remaining = attributes.GetValue<decimal>("estimatedhours");
+            targetTicket.Reporter = attributes.GetValue<string>("reporter");
+            targetTicket.SprintAssignment = attributes.GetValue<string>("sprintassignment");
+            targetTicket.SprintTeam = attributes.GetValue<string>("sprintteam");
+            targetTicket.Status = TracTypeConverters.TicketStatusConverter.ConvertToTarget(attributes.GetValue<string>("status"));
+            targetTicket.StatusUpdates = TracTypeConverters.TicketStatusUpdatesConverter.ConvertToTarget(attributes.GetValue<string>("statusupdatetext"));
+            targetTicket.Summary = attributes.GetValue<string>("summary");
+            targetTicket.TargetVersion = attributes.GetValue<string>("targetversion");
+            targetTicket.TechnicalNotes = attributes.GetValue<string>("technotes");
+            targetTicket.TestPlanReviewed = TracTypeConverters.BooleanTracConverter.ConvertToTarget(attributes.GetValue<string>("testplanreviewedprog"));
+            targetTicket.TotalHours = attributes.GetValue<decimal>("totalhours");
         }
     }
 }

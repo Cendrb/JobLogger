@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JobLogger.Tickets.States;
+using MetaTracInterface;
 
 namespace JobLogger.Tickets
 {
@@ -24,6 +25,7 @@ namespace JobLogger.Tickets
     {
         private List<Ticket> tickets = new List<Ticket>();
         private TicketLoader ticketLoader;
+        private TracComm tracComm;
 
         private StateQueues stateQueues = new StateQueues()
         {
@@ -31,11 +33,12 @@ namespace JobLogger.Tickets
             new StateQueue("Estimating", TicketStateRegistry.Instance.Get<EstimatingTicketState>())
         };
 
-        public TicketingControl(TicketLoader ticketLoader)
+        public TicketingControl(TicketLoader ticketLoader, TracComm tracComm)
         {
             InitializeComponent();
 
             this.ticketLoader = ticketLoader;
+            this.tracComm = tracComm;
 
             this.queueSelectComboBox.ItemsSource = this.stateQueues.Select(queue => queue.Name);
             this.queueSelectComboBox.SelectedIndex = 0;
@@ -59,6 +62,7 @@ namespace JobLogger.Tickets
             {
                 foreach (Ticket ticket in this.ticketLoader.Load(includeDoneTickets))
                 {
+                    this.tracComm.LoadTicketData(ticket.TracTicket);
                     this.tickets.Add(ticket);
                     this.Dispatcher.Invoke(() => this.AddTicketToUI(ticket));
                 }
@@ -93,7 +97,7 @@ namespace JobLogger.Tickets
             ticketControl.ContextMenu = contextMenu;
             this.ticketsStackPanel.Children.Add(ticketControl);
             ticketControl.TicketChanged += t => this.ticketLoader.Save(this.tickets, !this.includeDoneCheckBox.IsChecked.GetValueOrDefault());
-            ticketControl.TracTicketChanged += tracTicket => this.ticketLoader.SaveTracTicket(tracTicket);
+            ticketControl.TracTicketChanged += tracTicket => this.tracComm.UpdateTicket(ticket.TracTicket);
         }
 
         private void loadButton_Click(object sender, RoutedEventArgs e)

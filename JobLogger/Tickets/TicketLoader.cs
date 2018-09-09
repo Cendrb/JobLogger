@@ -13,22 +13,19 @@ namespace JobLogger.Tickets
     public class TicketLoader
     {
         private string filePath;
-        private TracComm tracComm;
 
-        public TicketLoader(string filePath, TracComm tracComm)
+        public TicketLoader(string filePath)
         {
             this.filePath = filePath;
             if (!File.Exists(filePath))
             {
                 this.Save(new List<Ticket>(), false);
             }
-
-            this.tracComm = tracComm;
         }
 
         public Ticket CreateNew(int id, TicketState initialState)
         {
-            TracTicketData tracTicket = this.tracComm.LoadTicket(id);
+            TracTicket tracTicket = new TracTicket(id);
             return new Ticket(tracTicket, initialState, new CustomTicketProperties());
         }
 
@@ -40,7 +37,7 @@ namespace JobLogger.Tickets
                 TicketState ticketState = TicketStateRegistry.Instance.GetByCode(data.StatusCode);
                 if (ticketState != null && (ticketState != TicketStateRegistry.Instance.Get<DoneTicketState>() || includeDone))
                 {
-                    TracTicketData tracTicket = this.tracComm.LoadTicket(data.ID);
+                    TracTicket tracTicket = new TracTicket(data.ID);
                     Ticket ticket = new Ticket(tracTicket, ticketState, data.TicketProperties);
                     yield return ticket;
                 }
@@ -67,11 +64,6 @@ namespace JobLogger.Tickets
             }
 
             File.WriteAllText(this.filePath, JsonConvert.SerializeObject(serializableDataList, Newtonsoft.Json.Formatting.Indented));
-        }
-
-        public void SaveTracTicket(IReadOnlyTracTicketData tracTicket)
-        {
-            this.tracComm.UpdateTicket(tracTicket);
         }
     }
 }

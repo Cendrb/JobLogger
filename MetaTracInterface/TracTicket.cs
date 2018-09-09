@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace MetaTracInterface
 {
-    public class TracTicketData : IReadOnlyTracTicketData
+    public class TracTicket : IReadOnlyTracTicketData
     {
-        public int ID { get; set; }
+        public TracTicket(int id)
+        {
+            this.ID = id;
+        }
+
+        public int ID { get; private set; }
         public DateTime Created { get; set; }
         public DateTime Changed { get; set; }
         public DateTime ChangeTime { get; set; }

@@ -23,7 +23,7 @@ namespace JobLogger.Tickets
     partial class TicketControl : UserControl
     {
         public event Action<Ticket> TicketChanged;
-        public event Action<IReadOnlyTracTicketData> TracTicketChanged;
+        public event Action<TracTicket> TracTicketChanged;
 
         private Ticket ticket;
 

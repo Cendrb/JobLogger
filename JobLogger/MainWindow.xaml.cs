@@ -51,9 +51,9 @@ namespace JobLogger
                 ConfigurationManager.AppSettings["TracUsername"],
                 ConfigurationManager.AppSettings["TracPassword"]);
 
-            TicketLoader ticketLoader = new TicketLoader(Path.Combine(ConfigurationManager.AppSettings["MainFolder"], "tickets.txt"), tracComm);
+            TicketLoader ticketLoader = new TicketLoader(Path.Combine(ConfigurationManager.AppSettings["MainFolder"], "tickets.txt"));
 
-            TicketingControl ticketingControl = new TicketingControl(ticketLoader);
+            TicketingControl ticketingControl = new TicketingControl(ticketLoader, tracComm);
             ticketingControl.Margin = new Thickness(10, 13, 0, 10);
 
             this.mainGrid.Children.Add(ticketingControl);

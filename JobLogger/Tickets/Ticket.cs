@@ -10,17 +10,16 @@ namespace JobLogger.Tickets
 {
     public class Ticket
     {
-        private TracTicketData tracTicket;
         private CustomTicketProperties ticketProperties;
 
-        public Ticket(TracTicketData tracTicket, TicketState currentState, CustomTicketProperties ticketProperties)
+        public Ticket(TracTicket tracTicket, TicketState currentState, CustomTicketProperties ticketProperties)
         {
-            this.tracTicket = tracTicket;
+            this.TracTicket = tracTicket;
             this.CurrentState = currentState;
             this.ticketProperties = ticketProperties;
         }
 
-        public IReadOnlyTracTicketData TracTicket { get { return this.tracTicket; } }
+        public TracTicket TracTicket { get; }
         public TicketState CurrentState { get; private set; }
         public IReadOnlyCustomTicketProperties TicketProperties { get { return this.ticketProperties; } }
 
@@ -171,7 +170,7 @@ namespace JobLogger.Tickets
 
         public void AddStatusUpdate(string authorAbbreviation, DateTime dateTime, string text)
         {
-            this.tracTicket.StatusUpdates.Insert(0, new TicketStatusUpdate() { AuthorAbbreviation = authorAbbreviation, DateTime = dateTime, Text = text });
+            this.TracTicket.StatusUpdates.Insert(0, new TicketStatusUpdate() { AuthorAbbreviation = authorAbbreviation, DateTime = dateTime, Text = text });
         }
     }
 }

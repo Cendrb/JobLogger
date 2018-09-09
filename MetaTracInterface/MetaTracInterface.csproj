@@ -50,7 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TicketAttachment.cs" />
     <Compile Include="TicketTestPlanAttachment.cs" />
-    <Compile Include="TracTicketData.cs" />
+    <Compile Include="TracTicket.cs" />
     <Compile Include="TicketPriority.cs" />
     <Compile Include="TicketStatus.cs" />
     <Compile Include="TicketStatusUpdate.cs" />
