@@ -10,13 +10,12 @@ using Newtonsoft.Json;
 
 namespace JobLogger.Tickets
 {
-    class TicketLoader
+    public class TicketLoader
     {
         private string filePath;
         private TracComm tracComm;
-        private StateQueues stateQueues;
 
-        public TicketLoader(string filePath, string username, string password, StateQueues stateQueues)
+        public TicketLoader(string filePath, TracComm tracComm)
         {
             this.filePath = filePath;
             if (!File.Exists(filePath))
@@ -24,9 +23,7 @@ namespace JobLogger.Tickets
                 this.Save(new List<Ticket>(), false);
             }
 
-            this.tracComm = new TracComm(username, password);
-
-            this.stateQueues = stateQueues;
+            this.tracComm = tracComm;
         }
 
         public Ticket CreateNew(int id, TicketState initialState)

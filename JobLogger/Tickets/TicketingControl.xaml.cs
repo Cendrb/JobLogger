@@ -31,11 +31,11 @@ namespace JobLogger.Tickets
             new StateQueue("Estimating", TicketStateRegistry.Instance.Get<EstimatingTicketState>())
         };
 
-        public TicketingControl()
+        public TicketingControl(TicketLoader ticketLoader)
         {
             InitializeComponent();
 
-            this.ticketLoader = new TicketLoader(System.IO.Path.Combine(ConfigurationManager.AppSettings["MainFolder"], "tickets.txt"), ConfigurationManager.AppSettings["TracUsername"], ConfigurationManager.AppSettings["TracPassword"], this.stateQueues);
+            this.ticketLoader = ticketLoader;
 
             this.queueSelectComboBox.ItemsSource = this.stateQueues.Select(queue => queue.Name);
             this.queueSelectComboBox.SelectedIndex = 0;
@@ -43,7 +43,7 @@ namespace JobLogger.Tickets
             this.ReloadTickets();
         }
 
-        private async void ReloadTickets()
+        public async void ReloadTickets()
         {
             this.loadButton.IsEnabled = false;
             this.includeDoneCheckBox.IsEnabled = false;

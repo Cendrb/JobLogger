@@ -7,7 +7,7 @@
         xmlns:Tickets="clr-namespace:JobLogger.Tickets" x:Class="JobLogger.MainWindow"
         mc:Ignorable="d"
         Title="THIS - Trac Hummus Integration Software" Height="487.726" Width="900.227">
-    <Grid>
+    <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ticketingControlColumn" Width="1*"/>
             <ColumnDefinition x:Name="jobLoggerColumn" Width="350"/>
@@ -19,8 +19,6 @@
         <Button x:Name="reloadButton" Content="Reload" HorizontalAlignment="Right" Margin="0,13,64,0" VerticalAlignment="Top" Width="75" Click="ReloadButton_Click" Grid.Column="1"/>
         <DatePicker x:Name="currentDateDatePicker" Margin="0,13,144,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="102" FirstDayOfWeek="Monday" IsTodayHighlighted="True" SelectedDateChanged="CurrentDateDatePicker_SelectedDateChanged" Grid.Column="1" />
         <Grid x:Name="teaTimerGrid" Height="304" Margin="4,7,10,0" VerticalAlignment="Top" Grid.Column="2"/>
-
-        <Tickets:TicketingControl Margin="10,13,0,10"/>
 
     </Grid>
 </Window>

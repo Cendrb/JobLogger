@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using CookComputing.XmlRpc;
+using JobLogger.Tickets;
 using MetaTracInterface;
 
 namespace JobLogger
@@ -46,7 +47,26 @@ namespace JobLogger
                 new TimeSpan(0, 5, 0),
             }));
 
+            TracComm tracComm = new TracComm(
+                ConfigurationManager.AppSettings["TracUsername"],
+                ConfigurationManager.AppSettings["TracPassword"]);
+
+            TicketLoader ticketLoader = new TicketLoader(Path.Combine(ConfigurationManager.AppSettings["MainFolder"], "tickets.txt"), tracComm);
+
+            TicketingControl ticketingControl = new TicketingControl(ticketLoader);
+            ticketingControl.Margin = new Thickness(10, 13, 0, 10);
+
+            this.mainGrid.Children.Add(ticketingControl);
+
             ReloadUI();
+
+            AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Clipboard.SetText(e.ExceptionObject.ToString());
+            MessageBox.Show("Exception copied to cliboard\n\n" + e.ExceptionObject.ToString(), "Unbehandelte Ausnahme, bericht an den Führer!");
         }
 
         private void ReloadUI()
