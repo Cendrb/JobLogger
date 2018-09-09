@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,15 @@ namespace JobLogger
         public MainWindow()
         {
             InitializeComponent();
+
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                this.Title = $"THIS - Trac Hummus Integration Software ${ApplicationDeployment.CurrentDeployment.CurrentVersion}";
+            }
+            else
+            {
+                this.Title = "THIS - Trac Hummus Integration Software (development version)";
+            }
 
             this.Width = double.Parse(ConfigurationManager.AppSettings["InitialWindowWidth"]);
 

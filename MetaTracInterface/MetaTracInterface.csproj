@@ -29,6 +29,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>THIS.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CookComputing.XmlRpcV2">
       <HintPath>..\..\..\..\..\Downloads\CookComputing.XmlRpcV2.dll</HintPath>
@@ -56,6 +62,9 @@
     <Compile Include="TicketStatusUpdate.cs" />
     <Compile Include="TracComm.cs" />
     <Compile Include="Helpers\XmlRpcUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="THIS.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
